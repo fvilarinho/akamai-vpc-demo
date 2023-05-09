@@ -29,6 +29,13 @@ resource "linode_firewall" "vpcGatewaySite1" {
   inbound_policy  = "DROP"
   outbound_policy = "ACCEPT"
 
+  inbound {
+    label    = "allow-ssh"
+    action   = "ACCEPT"
+    protocol = "TCP"
+    ports    = "22"
+    ipv4     = [ "0.0.0.0/0" ]
+  }
 
   inbound {
     label    = "allow-openvpn"
