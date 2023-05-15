@@ -11,14 +11,33 @@ resource "linode_stackscript" "vpcGatewaySetup" {
 # <UDF name="vpnServerNetworkAddressPrefix" label="Define the VPN Server Network Address Prefix" default="10.8.0.0">
 # <UDF name="vpnServerIpToConnect" label="Define the VPN Server IP/Hostname that you want to connect" default="">
 
+# Create environment file.
+function createEnvironmentFile() {
+  if [ -f "/root/.env" ]; then
+    source /root/.env
+  else
+    echo "Creating environment file..."
+
+    echo "export NAME=\"$NAME\"" > /root/.env
+    echo "export SSHPRIVATEKEY=\"$SSHPRIVATEKEY\"" >> /root/.env
+    echo "export ISVPNSERVER=\"$ISVPNSERVER\"" >> /root/.env
+    echo "export VPNSERVERNETWORKADDRESSPREFIX=\"$VPNSERVERNETWORKADDRESSPREFIX\"" >> /root/.env
+    echo "export VPNSERVERIPTOCONNECT=\"$VPNSERVERIPTOCONNECT\"" >> /root/.env
+  fi
+}
+
 # Define the hostname.
 function setHostname() {
+  echo "Defining hostname..."
+
   hostnamectl set-hostname "$NAME"
   echo "$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')" "$NAME" >> /etc/hosts
 }
 
 # Enable traffic forward between network interfaces.
 function enableTrafficForwarding() {
+  echo "Enabling traffic forward between network interfaces..."
+
   echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf
   sysctl -p
   iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
@@ -30,15 +49,17 @@ function enableTrafficForwarding() {
 
 # Install all required software.
 function installRequiredSoftware() {
+  echo "Installing all required software..."
+
   apt update
   apt -y upgrade
   apt -y install htop curl wget zip vim net-tools dnsutils tzdata openvpn locales-all
-
-  touch /var/lib/cloud/instance/locale-check.skip
 }
 
 # Install SSH private key to enable communication between VPC gateways and nodes.
 function installSshPrivateKey() {
+  echo "Installing SSH private key to enable communication between VPC gateways and nodes..."
+
   if [ -n "$SSHPRIVATEKEY" ]; then
     echo "$SSHPRIVATEKEY" > /root/.ssh/id_rsa
 
@@ -47,7 +68,9 @@ function installSshPrivateKey() {
 }
 
 # Download VPN Server setup file.
-function downloadVpnSetupFile() {
+function downloadVpnServerSetupFile() {
+  echo "Downloading VPN Server setup file..."
+
   mkdir -p "$HOME_DIR"/bin
 
   wget https://raw.githubusercontent.com/fvilarinho/openvpn-setup/main/setup.sh -O "$HOME_DIR"/bin/openvpn-setup.sh
@@ -57,6 +80,8 @@ function downloadVpnSetupFile() {
 
 # Install VPN Server based on the defined variables.
 function installVpnServer() {
+  echo "Installing VPN Server based on the defined variables..."
+
   export HOME_DIR=/opt/vpcGateway
 
   downloadVpnServerSetupFile
@@ -70,8 +95,9 @@ function installVpnServer() {
 
 # Connect into the VPN Server.
 function connectToTheVpnServer() {
-  ETC_DIR="$HOME_DIR"/etc
+  echo "Connecting into the VPN Server..."
 
+  ETC_DIR="$HOME_DIR"/etc
 
   while true; do
     echo "Waiting for the VPN client configuration be available..."
@@ -99,6 +125,7 @@ function connectToTheVpnServer() {
 
 # Startup script.
 function main() {
+  createEnvironmentFile
   setHostname
   enableTrafficForwarding
   installRequiredSoftware
@@ -128,19 +155,38 @@ resource "linode_stackscript" "vpcNodeSetup" {
 # <UDF name="sshPrivateKey" label="Define the SSH Private Key to be installed" default="">
 # <UDF name="defaultGatewayIp" label="Define the VPC Default Gateway IP" default="1.2.3.4">
 
+# Create environment file.
+function createEnvironmentFile() {
+  if [ -f "/root/.env" ]; then
+    source /root/.env
+  else
+    echo "Creating environment file..."
+
+    echo "export NAME=\"$NAME\"" > /root/.env
+    echo "export SSHPRIVATEKEY=\"$SSHPRIVATEKEY\"" >> /root/.env
+    echo "export DEFAULTGATEWAYIP=\"$DEFAULTGATEWAYIP\"" >> /root/.env
+  fi
+}
+
 # Define the hostname.
 function setHostname() {
+  echo "Defining hostname..."
+
   hostnamectl set-hostname "$NAME"
   echo "$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')" "$NAME" >> /etc/hosts
 }
 
 # Add default VPC routes.
 function addDefaultRoutes() {
+  echo "Adding default VPC routes..."
+
   route add default gw "$DEFAULTGATEWAYIP" eth0
 }
 
 # Install all required software.
 function installRequiredSoftware() {
+  echo "Installing all required software..."
+
   apt update
   apt -y upgrade
   apt -y install htop curl wget zip vim net-tools dnsutils tzdata locales-all
@@ -150,6 +196,8 @@ function installRequiredSoftware() {
 
 # Install SSH private key to enable communication between VPC gateways and nodes.
 function installSshPrivateKey() {
+  echo "Installing SSH private key to enable communication between VPC gateways and nodes..."
+
   if [ -n "$SSHPRIVATEKEY" ]; then
     echo "$SSHPRIVATEKEY" > /root/.ssh/id_rsa
 
@@ -159,6 +207,7 @@ function installSshPrivateKey() {
 
 # Startup script.
 function main() {
+  createEnvironmentFile
   setHostname
   addDefaultRoutes
   installRequiredSoftware

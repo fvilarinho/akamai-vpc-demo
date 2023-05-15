@@ -24,4 +24,6 @@ jobs:
         LINODE_TOKEN : ${{ secrets.LINODE_TOKEN }}
         LINODE_OBJECT_STORAGE_ACCESS_KEY: ${{ secrets.LINODE_OBJECT_STORAGE_ACCESS_KEY }}
         LINODE_OBJECT_STORAGE_ACCESS_SECRET: ${{ secrets.LINODE_OBJECT_STORAGE_ACCESS_SECRET }}
+        SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: ./deploy.sh

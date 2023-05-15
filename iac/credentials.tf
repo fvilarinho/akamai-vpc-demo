@@ -1,4 +1,4 @@
 # Define the Akamai Cloud token.
 provider "linode" {
-  token = var.linodeToken
+  token = chomp(var.linodeToken)
 }

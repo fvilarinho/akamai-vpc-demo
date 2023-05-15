@@ -12,7 +12,7 @@ resource "linode_instance" "vpcNodesSite1Subnet1" {
   stackscript_data = {
     name             = "${var.vpcNodesSite1.label}${count.index + 1}-subnet1"
     defaultGatewayIp = "10.1.1.1"
-    sshPrivateKey    = var.sshPrivateKey
+    sshPrivateKey    = chomp(var.sshPrivateKey)
   }
 
   # Subnet 1 (eth0).
@@ -22,7 +22,10 @@ resource "linode_instance" "vpcNodesSite1Subnet1" {
     ipam_address = "10.1.1.${count.index + 2}/24"
   }
 
-  depends_on = [ linode_stackscript.vpcNodeSetup, linode_instance.vpcGatewaySite1 ]
+  depends_on = [
+    linode_stackscript.vpcNodeSetup,
+    linode_instance.vpcGatewaySite1
+  ]
 }
 
 # Define the VPC Nodes instances for Site 1 and Subnet 2.
@@ -39,7 +42,7 @@ resource "linode_instance" "vpcNodesSite1Subnet2" {
   stackscript_data = {
     name             = "${var.vpcNodesSite1.label}${count.index + 1}-subnet2"
     defaultGatewayIp = "10.1.2.1"
-    sshPrivateKey    = var.sshPrivateKey
+    sshPrivateKey    = chomp(var.sshPrivateKey)
   }
 
   # Subnet 2 (eth0).
@@ -49,7 +52,10 @@ resource "linode_instance" "vpcNodesSite1Subnet2" {
     ipam_address = "10.1.2.${count.index + 2}/24"
   }
 
-  depends_on = [ linode_stackscript.vpcNodeSetup, linode_instance.vpcGatewaySite1 ]
+  depends_on = [
+    linode_stackscript.vpcNodeSetup,
+    linode_instance.vpcGatewaySite1
+  ]
 }
 
 # Define the VPC Nodes instances for Site 2 and Subnet 1.
@@ -66,7 +72,7 @@ resource "linode_instance" "vpcNodesSite2Subnet1" {
   stackscript_data = {
     name             = "${var.vpcNodesSite2.label}${count.index + 1}-subnet1"
     defaultGatewayIp = "10.2.1.1"
-    sshPrivateKey    = var.sshPrivateKey
+    sshPrivateKey    = chomp(var.sshPrivateKey)
   }
 
   # Subnet 1 (eth0).
@@ -76,7 +82,10 @@ resource "linode_instance" "vpcNodesSite2Subnet1" {
     ipam_address = "10.2.1.${count.index + 2}/24"
   }
 
-  depends_on = [ linode_stackscript.vpcNodeSetup, linode_instance.vpcGatewaySite2 ]
+  depends_on = [
+    linode_stackscript.vpcNodeSetup,
+    linode_instance.vpcGatewaySite2
+  ]
 }
 
 # Define the VPC Nodes instances for Site 2 and Subnet 2.
@@ -93,7 +102,7 @@ resource "linode_instance" "vpcNodesSite2Subnet2" {
   stackscript_data = {
     name             = "${var.vpcNodesSite2.label}${count.index}-subnet2"
     defaultGatewayIp = "10.2.2.1"
-    sshPrivateKey    = var.sshPrivateKey
+    sshPrivateKey    = chomp(var.sshPrivateKey)
   }
 
   # Subnet 2 (eth0).
@@ -103,5 +112,8 @@ resource "linode_instance" "vpcNodesSite2Subnet2" {
     ipam_address = "10.2.2.${count.index + 2}/24"
   }
 
-  depends_on = [ linode_stackscript.vpcNodeSetup, linode_instance.vpcGatewaySite2 ]
+  depends_on = [
+    linode_stackscript.vpcNodeSetup,
+    linode_instance.vpcGatewaySite2
+  ]
 }

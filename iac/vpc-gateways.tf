@@ -12,7 +12,7 @@ resource "linode_instance" "vpcGatewaySite1" {
     isVpnServer                   = "Yes"
     vpnServerNetworkAddressPrefix = "10.8.0.0"
     vpnServerIpToConnect          = linode_instance.vpcGatewaySite2.ip_address
-    sshPrivateKey                 = var.sshPrivateKey
+    sshPrivateKey                 = chomp(var.sshPrivateKey)
   }
 
   # WAN (eth0)
@@ -34,7 +34,10 @@ resource "linode_instance" "vpcGatewaySite1" {
     ipam_address = "10.1.2.1/24"
   }
 
-  depends_on = [ linode_stackscript.vpcGatewaySetup, linode_instance.vpcGatewaySite2 ]
+  depends_on = [
+    linode_stackscript.vpcGatewaySetup,
+    linode_instance.vpcGatewaySite2
+  ]
 }
 
 # Define the VPC Gateway for Site 2.
@@ -50,7 +53,7 @@ resource "linode_instance" "vpcGatewaySite2" {
     name                          = var.vpcGatewaySite2.label
     isVpnServer                   = "Yes"
     vpnServerNetworkAddressPrefix = "10.9.0.0"
-    sshPrivateKey                 = var.sshPrivateKey
+    sshPrivateKey                 = chomp(var.sshPrivateKey)
   }
 
   # WAN (eth0)
