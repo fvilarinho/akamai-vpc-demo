@@ -17,10 +17,13 @@ while true; do
 
   # Get the VPN client ID.
   CLIENT=$(ssh -q -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" root@"$VPNSERVERIPTOCONNECT" "cat /etc/hostname")
+  echo "$CLIENT"
 
   if [ -n "$CLIENT" ]; then
     # Check if the VPN client configuration exists.
     VPN_IS_OK=$(ssh -q -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" root@"$VPNSERVERIPTOCONNECT" "ls $ETC_DIR 2> /dev/null" | grep "$CLIENT.ovpn")
+
+    echo "$VPN_IS_OK"
 
     if [ -n "$VPN_IS_OK" ]; then
       break
