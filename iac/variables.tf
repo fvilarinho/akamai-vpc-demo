@@ -38,7 +38,7 @@ variable "vpcNodesSite2" {
   default = {
     label          = "vpc-site2-node"
     type           = "g6-standard-1"
-    countPerSubnet = 2
+    countPerSubnet = 1
   }
 }
 
