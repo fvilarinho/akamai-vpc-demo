@@ -11,11 +11,13 @@ resource "linode_stackscript" "vpcGatewaySetup" {
 # <UDF name="vpnServerNetworkAddressPrefix" label="Define the VPN Server Network Address Prefix" default="10.8.0.0">
 # <UDF name="vpnServerIpToConnect" label="Define the VPN Server IP/Hostname that you want to connect" default="">
 
+# Define the hostname.
 function setHostname() {
   hostnamectl set-hostname "$NAME"
   echo "$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')" "$NAME" >> /etc/hosts
 }
 
+# Enable traffic forward between network interfaces.
 function enableTrafficForwarding() {
   echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf
   sysctl -p
@@ -26,6 +28,7 @@ function enableTrafficForwarding() {
   chmod +x /etc/network/if-up.d/run-iptables
 }
 
+# Install all required software.
 function installRequiredSoftware() {
   apt update
   apt -y upgrade
@@ -34,6 +37,7 @@ function installRequiredSoftware() {
   touch /var/lib/cloud/instance/locale-check.skip
 }
 
+# Install SSH private key to enable communication between VPC gateways and nodes.
 function installSshPrivateKey() {
   if [ -n "$SSHPRIVATEKEY" ]; then
     echo "$SSHPRIVATEKEY" > /root/.ssh/id_rsa
@@ -42,7 +46,8 @@ function installSshPrivateKey() {
   fi
 }
 
-function downloadVpnServerSetupFile() {
+# Download VPN Server setup file.
+function downloadVpnSetupFile() {
   mkdir -p "$HOME_DIR"/bin
 
   wget https://raw.githubusercontent.com/fvilarinho/openvpn-setup/main/setup.sh -O "$HOME_DIR"/bin/openvpn-setup.sh
@@ -50,6 +55,7 @@ function downloadVpnServerSetupFile() {
   chmod +x "$HOME_DIR"/bin/openvpn-setup.sh
 }
 
+# Install VPN Server based on the defined variables.
 function installVpnServer() {
   export HOME_DIR=/opt/vpcGateway
 
@@ -62,16 +68,20 @@ function installVpnServer() {
   "$HOME_DIR"/bin/openvpn-setup.sh
 }
 
+# Connect into the VPN Server.
 function connectToTheVpnServer() {
   ETC_DIR="$HOME_DIR"/etc
 
-  while true; do
-    echo "Waiting for the VPN Server client configuration be available..."
 
-    CLIENT=$(ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" root@"$VPNSERVERIPTOCONNECT" "cat /etc/hostname")
+  while true; do
+    echo "Waiting for the VPN client configuration be available..."
+
+    # Get the VPN client ID.
+    CLIENT=$(ssh -q -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" root@"$VPNSERVERIPTOCONNECT" "cat /etc/hostname")
 
     if [ -n "$CLIENT" ]; then
-      VPN_IS_OK=$(ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -q root@"$VPNSERVERIPTOCONNECT" "ls $ETC_DIR" | grep "$CLIENT.ovpn")
+      # Check if the VPN client configuration exists.
+      VPN_IS_OK=$(ssh -q -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" root@"$VPNSERVERIPTOCONNECT" "ls $ETC_DIR 2> /dev/null" | grep "$CLIENT.ovpn")
 
       if [ -n "$VPN_IS_OK" ]; then
         break
@@ -81,11 +91,13 @@ function connectToTheVpnServer() {
     sleep 1
   done
 
-  scp -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" root@"$VPNSERVERIPTOCONNECT":"$ETC_DIR/$CLIENT.ovpn" /etc/openvpn
+  # Download the VPN client configuration.
+  scp -q -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" root@"$VPNSERVERIPTOCONNECT:$ETC_DIR/$CLIENT.ovpn" /etc/openvpn
 
   openvpn --config /etc/openvpn/$CLIENT.ovpn
 }
 
+# Startup script.
 function main() {
   setHostname
   enableTrafficForwarding
@@ -116,15 +128,18 @@ resource "linode_stackscript" "vpcNodeSetup" {
 # <UDF name="sshPrivateKey" label="Define the SSH Private Key to be installed" default="">
 # <UDF name="defaultGatewayIp" label="Define the VPC Default Gateway IP" default="1.2.3.4">
 
+# Define the hostname.
 function setHostname() {
   hostnamectl set-hostname "$NAME"
   echo "$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')" "$NAME" >> /etc/hosts
 }
 
+# Add default VPC routes.
 function addDefaultRoutes() {
   route add default gw "$DEFAULTGATEWAYIP" eth0
 }
 
+# Install all required software.
 function installRequiredSoftware() {
   apt update
   apt -y upgrade
@@ -133,6 +148,7 @@ function installRequiredSoftware() {
   touch /var/lib/cloud/instance/locale-check.skip
 }
 
+# Install SSH private key to enable communication between VPC gateways and nodes.
 function installSshPrivateKey() {
   if [ -n "$SSHPRIVATEKEY" ]; then
     echo "$SSHPRIVATEKEY" > /root/.ssh/id_rsa
@@ -141,6 +157,7 @@ function installSshPrivateKey() {
   fi
 }
 
+# Startup script.
 function main() {
   setHostname
   addDefaultRoutes
