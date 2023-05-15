@@ -12,7 +12,7 @@ resource "linode_instance" "vpcGatewaySite1" {
     isVpnServer                   = "Yes"
     vpnServerNetworkAddressPrefix = "10.8.0.0"
     vpnServerIpToConnect          = linode_instance.vpcGatewaySite2.ip_address
-    sshPrivateKey                 = chomp(var.sshPrivateKey)
+    sshPrivateKey                 = var.sshPrivateKey
   }
 
   # WAN (eth0)
@@ -50,7 +50,7 @@ resource "linode_instance" "vpcGatewaySite2" {
     name                          = var.vpcGatewaySite2.label
     isVpnServer                   = "Yes"
     vpnServerNetworkAddressPrefix = "10.9.0.0"
-    sshPrivateKey                 = chomp(var.sshPrivateKey)
+    sshPrivateKey                 = var.sshPrivateKey
   }
 
   # WAN (eth0)

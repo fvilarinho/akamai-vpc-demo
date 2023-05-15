@@ -12,7 +12,7 @@ resource "linode_instance" "vpcNodesSite1Subnet1" {
   stackscript_data = {
     name             = "${var.vpcNodesSite1.label}${count.index + 1}-subnet1"
     defaultGatewayIp = "10.1.1.1"
-    sshPrivateKey    = chomp(var.sshPrivateKey)
+    sshPrivateKey    = var.sshPrivateKey
   }
 
   # Subnet 1 (eth0).
@@ -39,7 +39,7 @@ resource "linode_instance" "vpcNodesSite1Subnet2" {
   stackscript_data = {
     name             = "${var.vpcNodesSite1.label}${count.index + 1}-subnet2"
     defaultGatewayIp = "10.1.2.1"
-    sshPrivateKey    = chomp(var.sshPrivateKey)
+    sshPrivateKey    = var.sshPrivateKey
   }
 
   # Subnet 2 (eth0).
@@ -66,7 +66,7 @@ resource "linode_instance" "vpcNodesSite2Subnet1" {
   stackscript_data = {
     name             = "${var.vpcNodesSite2.label}${count.index + 1}-subnet1"
     defaultGatewayIp = "10.2.1.1"
-    sshPrivateKey    = chomp(var.sshPrivateKey)
+    sshPrivateKey    = var.sshPrivateKey
   }
 
   # Subnet 1 (eth0).
@@ -93,7 +93,7 @@ resource "linode_instance" "vpcNodesSite2Subnet2" {
   stackscript_data = {
     name             = "${var.vpcNodesSite2.label}${count.index}-subnet2"
     defaultGatewayIp = "10.2.2.1"
-    sshPrivateKey    = chomp(var.sshPrivateKey)
+    sshPrivateKey    = var.sshPrivateKey
   }
 
   # Subnet 2 (eth0).
