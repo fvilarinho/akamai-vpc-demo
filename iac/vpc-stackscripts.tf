@@ -7,7 +7,6 @@ resource "linode_stackscript" "vpcGatewaySetup" {
 #!/bin/bash
 # <UDF name="name" label="Define the VPC Gateway Name" default="vpc-gateway">
 # <UDF name="sshPrivateKey" label="Define the SSH Private Key to be installed" default="">
-# <UDF name="isVpnServer" label="Do you want to enable a VPN Server (OpenVPN)?" oneOf="Yes,No" default="No">
 # <UDF name="vpnServerNetworkAddressPrefix" label="Define the VPN Server Network Address Prefix" default="10.8.0.0">
 # <UDF name="vpnServerIpToConnect" label="Define the VPN Server IP/Hostname that you want to connect" default="">
 
@@ -20,7 +19,6 @@ function createEnvironmentFile() {
 
     echo "export NAME=\"$NAME\"" > /root/.env
     echo "export SSHPRIVATEKEY=\"$SSHPRIVATEKEY\"" >> /root/.env
-    echo "export ISVPNSERVER=\"$ISVPNSERVER\"" >> /root/.env
     echo "export VPNSERVERNETWORKADDRESSPREFIX=\"$VPNSERVERNETWORKADDRESSPREFIX\"" >> /root/.env
     echo "export VPNSERVERIPTOCONNECT=\"$VPNSERVERIPTOCONNECT\"" >> /root/.env
   fi
@@ -130,10 +128,7 @@ function main() {
   enableTrafficForwarding
   installRequiredSoftware
   installSshPrivateKey
-
-  if [ "$ISVPNSERVER" == "Yes" ]; then
-    installVpnServer
-  fi
+  installVpnServer
 
   if [ -n "$VPNSERVERIPTOCONNECT" ]; then
     connectToTheVpnServer
