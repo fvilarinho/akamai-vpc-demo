@@ -1,0 +1,24 @@
+name: Akamai SIEM Connector Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - "*.md"
+      - "LICENSE"
+
+jobs:
+  build:
+    name: Jobs
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download the project files
+      uses: actions/checkout@v3
+      
+    - name: Deploy
+      env:
+        LINODE_TOKEN : ${{ secrets.LINODE_TOKEN }}
+        LINODE_OBJECT_STORAGE_ACCESS_KEY: ${{ secrets.LINODE_OBJECT_STORAGE_ACCESS_KEY }}
+        LINODE_OBJECT_STORAGE_ACCESS_SECRET: ${{ secrets.LINODE_OBJECT_STORAGE_ACCESS_SECRET }}
+      run: ./deploy.sh
