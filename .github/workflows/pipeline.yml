@@ -13,10 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Download the project files
+    - name: 1. Download the project files
       uses: actions/checkout@v3
-      
-    - name: Deploy
+
+    - name: 2. Install Terraform client
+      run: npm install terraform@latest -g
+
+    - name: 3. Deploy
       env:
         LINODE_TOKEN : ${{ secrets.LINODE_TOKEN }}
         LINODE_OBJECT_STORAGE_ACCESS_KEY: ${{ secrets.LINODE_OBJECT_STORAGE_ACCESS_KEY }}
