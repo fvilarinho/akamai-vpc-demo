@@ -2,12 +2,12 @@ variable "linodeToken" {
   default = "linodeToken"
 }
 
-variable "sshPublicKeyFile" {
-  default = "~/.ssh/id_rsa.pub"
+variable "sshPublicKey" {
+  default = "sshPublicKey"
 }
 
-variable "sshPrivateKeyFile" {
-  default = "~/.ssh/id_rsa"
+variable "sshPrivateKey" {
+  default = "sshPrivateKey"
 }
 
 variable "vpcGatewaySite1" {

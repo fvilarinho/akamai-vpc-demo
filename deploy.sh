@@ -20,6 +20,8 @@ cd iac || exit 1
 # Provision the infrastructure.
 $TERRAFORM_CMD init || exit 1
 $TERRAFORM_CMD apply -var "linodeToken=$LINODE_TOKEN" \
+                     -var "sshPrivateKey=$SSH_PRIVATE_KEY" \
+                     -var "sshPublicKey=$SSH_PUBLIC_KEY" \
                      -auto-approve || exit 1
 
 cd ..

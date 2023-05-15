@@ -22,6 +22,8 @@ deprovisioning.
 
 Environment variables needed:
 
+- `SSH_PUBLIC_KEY`: Defines the SSH public key used to connect in the VPC gateways and nodes.
+- `SSH_PRIVATE_KEY`: Defines the SSH private key used to connect in the VPC gateways and nodes.
 - `LINODE_TOKEN`: Defines the token to communicate with Akamai Connected Cloud.
 - `LINODE_OBJECT_STORAGE_ACCESS_KEY`: Defines the access key to storage the terraform state in Akamai Connected Cloud 
 object storage.

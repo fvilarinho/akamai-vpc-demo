@@ -6,7 +6,7 @@ resource "random_string" "vpcDefaultPassword" {
 # Define the SSH Public Key to be installed in the VPC Gateways and Nodes and used for remote access.
 resource "linode_sshkey" "vpcSshPublicKey" {
   label   = "vpc-ssh-public-key"
-  ssh_key = chomp(file(var.sshPublicKeyFile))
+  ssh_key = chomp(var.sshPublicKey)
 }
 
 # Download the VPN client configuration file.
