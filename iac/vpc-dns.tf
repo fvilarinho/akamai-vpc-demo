@@ -9,4 +9,6 @@ resource "linode_domain_record" "vpcDomainRecord" {
   name        = var.vpcGatewaySite1.label
   record_type = "A"
   target      = linode_instance.vpcGatewaySite1.ip_address
+
+  depends_on = [ linode_firewall.vpcGatewaySite1 ]
 }
