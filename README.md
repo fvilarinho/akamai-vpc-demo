@@ -74,5 +74,6 @@ Import the `.ovpn` file saved in this project directory, after the provisioning.
 ## 7. Other resources
 
 - [`Akamai Connected Cloud`](https://www.linode.com)
+- [`OpenVPN Setup Script`](https://github.com/fvilarinho/openvpn-setup)
 
 And that's it!!
