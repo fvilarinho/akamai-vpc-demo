@@ -1,4 +1,4 @@
-name: Akamai SIEM Connector Pipeline
+name: Akamai VPC Demo Pipeline
 
 on:
   push:
