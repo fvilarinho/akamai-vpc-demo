@@ -3,9 +3,12 @@
 ## 1. Introduction
 
 VPC or Virtual Private Cloud is a concept where it is possible to set up private networks in a Cloud infrastructure.
+
 It is a good practice to use VPCs to protect your applications from the outside world (Internet) and consequently 
 set up an environment with controlled and managed access.
+
 We'll show you how easy and fast it is to set up your VPC using Akamai Connected Cloud resources on a global scale.
+
 All this in an automated way with Terraform recipes.
 
 ## 2. Maintainers
