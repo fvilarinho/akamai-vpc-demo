@@ -47,7 +47,7 @@ If you to customize by yourself, just edit the files located in the `iac` direct
 - `vpc-nodes.yml`: Defines the VPC nodes to be provision.
 - `vpc-stackscripts.yml`: Defines the setup script of the VPC.
 
-## 7. Other resources
+## 6. Other resources
 
 - [`Akamai Connected Cloud`](https://www.linode.com)
 
