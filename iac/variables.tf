@@ -10,6 +10,10 @@ variable "sshPrivateKey" {
   default = "sshPrivateKey"
 }
 
+variable "vpcDomain" {
+  default = "vila.app.br"
+}
+
 variable "vpcGatewaySite1" {
   default = {
     label  = "vpc-site1-gateway"
