@@ -39,15 +39,24 @@ Follow this [diagram](https://viewer.diagrams.net/?tags=%7B%7D&edit=_blank&layer
 If you to customize by yourself, just edit the files located in the `iac` directory.
 
 - `credentials.tf`: Defines the Akamai Connected Cloud token.
-- `main.tf`: Defines the Akamai Connected Cloud provisioning recipe.
-- `variables.tf`: Defines the Akamai Connected Cloud provisioning recipe variables.
-- `vpc-credentials.tf`: Defines the default credentials to connect in the Akamai Connected Cloud infrastructure.
-- `vpc-firewall.yml`: Defines the firewall rules to connect in the Akamai Connected Cloud infrastructure.
-- `vpc-gateways.yml`: Defines the VPC gateways to be provision.
-- `vpc-nodes.yml`: Defines the VPC nodes to be provision.
-- `vpc-stackscripts.yml`: Defines the setup script of the VPC.
+- `main.tf`: Defines the VPC provisioning plugins and state storage.
+- `variables.tf`: Defines the VPC provisioning variables.
+- `vpc-credentials.tf`: Defines default credentials for connecting to the VPC.
+- `vpc-firewall.yml`: Defines firewall rules for connecting to the VPC.
+- `vpc-gateways.yml`: Defines the VPC gateways provisioning recipe.
+- `vpc-nodes.yml`: Defines the VPC nodes provisioning recipe.
+- `vpc-stackscripts.yml`: Defines the VPC configuration scripts.
 
-## 6. Other resources
+## 6. Testing
+
+After the VPC was created, you can connect into it using an OpenVPN client.
+
+- [`TunnelBlick`](https://tunnelblick.net/downloads.html): For MacOS users.
+- [`OpenVPN Client`](https://openvpn.net/client): For all operating systems.
+
+Import the `.ovpn` file saved in this project directory, after the provisioning.
+
+## 7. Other resources
 
 - [`Akamai Connected Cloud`](https://www.linode.com)
 
