@@ -12,6 +12,8 @@ All this in an automated way with Terraform recipes.
 
 - [Felipe Vilarinho](https://contacts.akamai.com/fvilarin) - Engagement Manager LATAM
 
+[![Akamai VPC Demo Pipeline](https://github.com/fvilarinho/akamai-vpc-demo/actions/workflows/pipeline.yml/badge.svg)](https://github.com/fvilarinho/akamai-vpc-demo/actions/workflows/pipeline.yml)
+
 If you want to collaborate in this project, reach out us by e-Mail.
 
 You can also fork and customize this project by yourself once it's opensource. 
