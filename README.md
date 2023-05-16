@@ -2,7 +2,11 @@
 
 ## 1. Introduction
 
-This project has the goal to demonstrate how easy is to build a VPC in Akamai Connected Cloud using Terraform.
+VPC or Virtual Private Cloud is a concept where it is possible to set up private networks in a Cloud infrastructure.
+It is a good practice to use VPCs to protect your applications from the outside world (Internet) and consequently 
+set up an environment with controlled and managed access.
+We'll show you how easy and fast it is to set up your VPC using Akamai Connected Cloud resources on a global scale.
+All this in an automated way with Terraform recipes.
 
 ## 2. Maintainers
 
@@ -18,16 +22,22 @@ Follow the requirements below to set up your environment.
 - [`Terraform 1.3.x or later`](https://www.terraform.io)
 
 Just execute the shell script `deploy.sh` to start the provisioning and execute the shell script `undeploy.sh` for
-deprovisioning.
+de-provisioning.
+
+The infrastructure provisioning state will be stored in an object storage. By default, we are using the Akamai Connected
+Cloud object storage. So, before start the deployment, you need to create your bucket and credentials. To do that, 
+follow the these [instructions](https://www.linode.com/docs/products/storage/object-storage/get-started/).
+
+After that, you need to change the `main.tf` under `iac` directory and put your object storage attributes there.
 
 Environment variables needed:
 
 - `SSH_PUBLIC_KEY`: Defines the SSH public key used to connect in the VPC gateways and nodes.
 - `SSH_PRIVATE_KEY`: Defines the SSH private key used to connect in the VPC gateways and nodes.
 - `LINODE_TOKEN`: Defines the token to communicate with Akamai Connected Cloud.
-- `LINODE_OBJECT_STORAGE_ACCESS_KEY`: Defines the access key to storage the terraform state in Akamai Connected Cloud 
+- `LINODE_OBJECT_STORAGE_ACCESS_KEY`: Defines the access key to store the terraform state in Akamai Connected Cloud. 
 object storage.
-- `LINODE_OBJECT_STORAGE_ACCESS_SECRET`: Defines the access secret to storage the terraform state in Akamai Connected 
+- `LINODE_OBJECT_STORAGE_ACCESS_SECRET`: Defines the access secret to store the terraform state in Akamai Connected.
 Cloud object storage.
 
 ## 4. Architecture
