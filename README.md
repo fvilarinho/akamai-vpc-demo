@@ -13,7 +13,7 @@ All this in an automated way with Terraform recipes.
 
 ## 2. Maintainers
 
-- [Felipe Vilarinho](https://contacts.akamai.com/fvilarin) - Engagement Manager LATAM
+- [Felipe Vilarinho](https://www.linkedin.com/in/fvilarinho)
 
 [![Akamai VPC Demo Pipeline](https://github.com/fvilarinho/akamai-vpc-demo/actions/workflows/pipeline.yml/badge.svg)](https://github.com/fvilarinho/akamai-vpc-demo/actions/workflows/pipeline.yml)
 
