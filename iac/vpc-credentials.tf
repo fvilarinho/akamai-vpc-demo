@@ -14,6 +14,7 @@ resource "null_resource" "downloadVpnClientConfigurationFile" {
   triggers = {
     always_run = timestamp()
   }
+
   provisioner "local-exec" {
     command = "./downloadVpnClientConfigurationFile.sh ${linode_instance.vpcGatewaySite1.ip_address}"
   }
