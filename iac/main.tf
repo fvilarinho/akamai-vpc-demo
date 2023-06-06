@@ -6,7 +6,9 @@ terraform {
     region                      = "us-east-1"
     endpoint                    = "us-east-1.linodeobjects.com"
     skip_credentials_validation = true
+    shared_credentials_file     = "~/.akamai-vpc-demo/.terraformBackendCredentials"
   }
+
   required_providers {
     linode = {
       source = "linode/linode"

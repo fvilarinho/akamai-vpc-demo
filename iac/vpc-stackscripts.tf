@@ -1,8 +1,8 @@
 # Define the VPC Gateway Setup recipe.
 resource "linode_stackscript" "vpcGatewaySetup" {
-  label       = var.vpcGatewaySetup.label
+  label       = var.vpcGatewaySetup.id
   description = var.vpcGatewaySetup.description
-  images      = [ var.vpcGatewaySetup.image ]
+  images      = [ var.vpcGatewaySetup.os ]
   script      = <<EOF
 #!/bin/bash
 # <UDF name="name" label="Define the VPC Gateway Name" default="vpc-gateway">
@@ -141,9 +141,9 @@ EOF
 
 # Define the VPC Nodes Setup recipe.
 resource "linode_stackscript" "vpcNodeSetup" {
-  label       = var.vpcNodesSetup.label
+  label       = var.vpcNodesSetup.id
   description = var.vpcNodesSetup.description
-  images      = [ var.vpcNodesSetup.image ]
+  images      = [ var.vpcNodesSetup.os ]
   script      = <<EOF
 #!/bin/bash
 # <UDF name="name" label="Define the VPC Node Name" default="vpc-node">

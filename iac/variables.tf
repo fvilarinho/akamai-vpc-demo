@@ -2,21 +2,9 @@ variable "linodeToken" {
   default = "linodeToken"
 }
 
-variable "sshPublicKey" {
-  default = "sshPublicKey"
-}
-
-variable "sshPrivateKey" {
-  default = "sshPrivateKey"
-}
-
-variable "vpcDomain" {
-  default = "vila.app.br"
-}
-
 variable "vpcGatewaySite1" {
   default = {
-    label  = "vpc-site1-gateway"
+    id     = "vpc-site1-gateway"
     region = "us-east"
     type   = "g6-standard-2"
   }
@@ -24,7 +12,7 @@ variable "vpcGatewaySite1" {
 
 variable "vpcGatewaySite2" {
   default = {
-    label  = "vpc-site2-gateway"
+    id     = "vpc-site2-gateway"
     region = "us-iad"
     type   = "g6-standard-2"
   }
@@ -32,7 +20,7 @@ variable "vpcGatewaySite2" {
 
 variable "vpcNodesSite1" {
   default = {
-    label          = "vpc-site1-node"
+    id             = "vpc-site1-node"
     type           = "g6-standard-1"
     countPerSubnet = 2
   }
@@ -40,7 +28,7 @@ variable "vpcNodesSite1" {
 
 variable "vpcNodesSite2" {
   default = {
-    label          = "vpc-site2-node"
+    id             = "vpc-site2-node"
     type           = "g6-standard-1"
     countPerSubnet = 2
   }
@@ -48,16 +36,16 @@ variable "vpcNodesSite2" {
 
 variable "vpcGatewaySetup" {
   default = {
-    label       = "VPC Gateway"
+    id          = "VPC Gateway"
     description = "Setup a VPC Gateway at the boot."
-    image       = "linode/debian10"
+    os          = "linode/debian10"
   }
 }
 
 variable "vpcNodesSetup" {
   default = {
-    label       = "VPC Node"
+    id          = "VPC Node"
     description = "Setup a VPC Node at the boot."
-    image       = "linode/debian10"
+    os          = "linode/debian10"
   }
 }

@@ -15,8 +15,6 @@ All this in an automated way with Terraform recipes.
 
 - [Felipe Vilarinho](https://www.linkedin.com/in/fvilarinho)
 
-[![Akamai VPC Demo Pipeline](https://github.com/fvilarinho/akamai-vpc-demo/actions/workflows/pipeline.yml/badge.svg)](https://github.com/fvilarinho/akamai-vpc-demo/actions/workflows/pipeline.yml)
-
 If you want to collaborate in this project, reach out us by e-Mail.
 
 You can also fork and customize this project by yourself once it's opensource. 
@@ -24,7 +22,7 @@ Follow the requirements below to set up your environment.
 
 ## 3. Requirements
 
-- [`Terraform 1.3.x or later`](https://www.terraform.io)
+- [`Terraform 1.4.x`](https://www.terraform.io)
 
 Just execute the shell script `deploy.sh` to start the provisioning and execute the shell script `undeploy.sh` for
 de-provisioning.
@@ -37,13 +35,11 @@ After that, you need to change the `main.tf` under `iac` directory and put your 
 
 Environment variables needed:
 
-- `SSH_PUBLIC_KEY`: Defines the SSH public key used to connect in the VPC gateways and nodes.
-- `SSH_PRIVATE_KEY`: Defines the SSH private key used to connect in the VPC gateways and nodes.
 - `LINODE_TOKEN`: Defines the token to communicate with Akamai Connected Cloud.
-- `LINODE_OBJECT_STORAGE_ACCESS_KEY`: Defines the access key to store the terraform state in Akamai Connected Cloud. 
-object storage.
-- `LINODE_OBJECT_STORAGE_ACCESS_SECRET`: Defines the access secret to store the terraform state in Akamai Connected.
-Cloud object storage.
+
+You also need to create the terraform backend credentials in `$HOME/.akamai-vpc-demo/.terraformBackendCredentials`.
+The content of this file should follow the S3 credentials format but replacing with the credentials of the Akamai 
+Connected Cloud object storage defined in the `main.tf` file under `iac` directory.
 
 ## 4. Architecture
 

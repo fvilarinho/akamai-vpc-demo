@@ -1,27 +1,29 @@
 #!/bin/bash
 
-# Find terraform binary.
-TERRAFORM_CMD=$(which terraform)
+# Check for dependencies of this script.
+function checkDependencies() {
+  # Find terraform binary.
+  TERRAFORM_CMD=$(which terraform)
 
-# Check if terraform is installed.
-if [ -z "$TERRAFORM_CMD" ]; then
-  echo "Please install Terraform to continue!"
+  # Check if terraform is installed.
+  if [ -z "$TERRAFORM_CMD" ]; then
+    echo "Terraform is not installed! Please install it first to continue!"
 
-  exit 1
-fi
+    exit 1
+  fi
+}
 
-source ./functions.sh
+# Prepare the environment to execute the commands of this script.
+function prepareToExecute() {
+  cd iac || exit 1
+}
 
-# Create terraform state credentials.
-createTerraformStateCredentials
-
-cd iac || exit 1
+checkDependencies
+prepareToExecute
 
 # Provision the infrastructure.
-$TERRAFORM_CMD init || exit 1
+$TERRAFORM_CMD init \
+               --upgrade \
+               --migrate-state
 $TERRAFORM_CMD apply -var "linodeToken=$LINODE_TOKEN" \
-                     -var "sshPrivateKey=$SSH_PRIVATE_KEY" \
-                     -var "sshPublicKey=$SSH_PUBLIC_KEY" \
-                     -auto-approve || exit 1
-
-cd ..
+                     -auto-approve

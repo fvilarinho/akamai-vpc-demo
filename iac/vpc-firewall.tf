@@ -1,6 +1,6 @@
 # Define the Firewall rules to access the VPC site 1.
 resource "linode_firewall" "vpcGatewaySite1" {
-  label           = "${var.vpcGatewaySite1.label}-firewall"
+  label           = "${var.vpcGatewaySite1.id}-firewall"
   inbound_policy  = "DROP"
   outbound_policy = "ACCEPT"
 
@@ -26,7 +26,7 @@ resource "linode_firewall" "vpcGatewaySite1" {
 
 # Define the Firewall rules to access the VPC site 2.
 resource "linode_firewall" "vpcGatewaySite2" {
-  label           = "${var.vpcGatewaySite2.label}-firewall"
+  label           = "${var.vpcGatewaySite2.id}-firewall"
   inbound_policy  = "DROP"
   outbound_policy = "ACCEPT"
 
