@@ -1,17 +1,28 @@
-# Define the VPC Gateway for Site 1.
+# Attributes of the site 1 region.
+data "linode_region" "vpcGatewaySite1" {
+  id = var.vpcGatewaySite1.region
+}
+
+# Attributes of the site 2 region.
+data "linode_region" "vpcGatewaySite2" {
+  id = var.vpcGatewaySite2.region
+}
+
+# Define the VPC gateway for site 1.
 resource "linode_instance" "vpcGatewaySite1" {
-  label            = var.vpcGatewaySite1.label
-  tags             = [ "Site 1 (${var.vpcGatewaySite1.region})" ]
+  label            = var.vpcGatewaySite1.id
+  tags             = [ "Site 1 (${data.linode_region.vpcGatewaySite1.label})" ]
   type             = var.vpcGatewaySite1.type
   region           = var.vpcGatewaySite1.region
-  image            = var.vpcGatewaySetup.image
-  authorized_keys  = [ linode_sshkey.vpcSshPublicKey.ssh_key ]
+  image            = var.vpcGatewaySetup.os
+  root_pass        = random_password.vpcGateway.result
+  authorized_keys  = [ chomp(tls_private_key.vpc.public_key_openssh) ]
   stackscript_id   = linode_stackscript.vpcGatewaySetup.id
   stackscript_data = {
-    name                          = var.vpcGatewaySite1.label
-    vpnServerNetworkAddressPrefix = "10.8.0.0"
-    vpnServerIpToConnect          = linode_instance.vpcGatewaySite2.ip_address
-    sshPrivateKey                 = chomp(var.sshPrivateKey)
+    name                              = var.vpcGatewaySite1.id
+    vpn_server_network_address_prefix = "10.8.0.0"
+    vpn_server_ip_to_connect          = linode_instance.vpcGatewaySite2.ip_address
+    ssh_private_key                   = chomp(tls_private_key.vpc.private_key_openssh)
   }
 
   # WAN (eth0)
@@ -34,24 +45,27 @@ resource "linode_instance" "vpcGatewaySite1" {
   }
 
   depends_on = [
+    random_password.vpcGateway,
+    tls_private_key.vpc,
     linode_stackscript.vpcGatewaySetup,
     linode_instance.vpcGatewaySite2
   ]
 }
 
-# Define the VPC Gateway for Site 2.
+# Define the VPC gateway for site 1.
 resource "linode_instance" "vpcGatewaySite2" {
-  label            = var.vpcGatewaySite2.label
-  tags             = [ "Site 2 (${var.vpcGatewaySite2.region})" ]
+  label            = var.vpcGatewaySite2.id
+  tags             = [ "Site 2 (${data.linode_region.vpcGatewaySite2.label})" ]
   type             = var.vpcGatewaySite2.type
   region           = var.vpcGatewaySite2.region
-  image            = var.vpcGatewaySetup.image
-  authorized_keys  = [ linode_sshkey.vpcSshPublicKey.ssh_key ]
+  image            = var.vpcGatewaySetup.os
+  root_pass        = random_password.vpcGateway.result
+  authorized_keys  = [ chomp(tls_private_key.vpc.public_key_openssh) ]
   stackscript_id   = linode_stackscript.vpcGatewaySetup.id
   stackscript_data = {
-    name                          = var.vpcGatewaySite2.label
-    vpnServerNetworkAddressPrefix = "10.9.0.0"
-    sshPrivateKey                 = chomp(var.sshPrivateKey)
+    name                              = var.vpcGatewaySite2.id
+    vpn_server_network_address_prefix = "10.9.0.0"
+    ssh_private_key                   = chomp(tls_private_key.vpc.private_key_openssh)
   }
 
   # WAN (eth0)
@@ -73,5 +87,9 @@ resource "linode_instance" "vpcGatewaySite2" {
     ipam_address = "10.2.2.1/24"
   }
 
-  depends_on = [ linode_stackscript.vpcGatewaySetup ]
+  depends_on = [
+    random_password.vpcGateway,
+    tls_private_key.vpc,
+    linode_stackscript.vpcGatewaySetup
+  ]
 }

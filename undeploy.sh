@@ -1,30 +1,19 @@
 #!/bin/bash
 
-# Find terraform binary.
-TERRAFORM_CMD=$(which terraform)
+# Prepares the environment to execute the commands of this script.
+function prepareToExecute() {
+  source functions.sh
 
-# Check if terraform is installed.
-if [ -z "$TERRAFORM_CMD" ]; then
-  echo "Please install Terraform to continue!"
+  rm -f "*.ovpn"
 
-  exit 1
-fi
+  cd iac || exit 1
+}
 
-source ./functions.sh
+prepareToExecute
 
-# Create terraform state credentials.
-createTerraformStateCredentials
-
-# Remove all VPN client configurations.
-rm -f *.ovpn 2> /dev/null
-
-cd iac || exit 1
-
-# Deprovision the infrastructure.
-$TERRAFORM_CMD init || exit 1
-$TERRAFORM_CMD destroy -var "linodeToken=$LINODE_TOKEN" \
-                       -var "sshPrivateKey=$SSH_PRIVATE_KEY" \
-                       -var "sshPublicKey=$SSH_PUBLIC_KEY" \
-                       -auto-approve || exit 1
-
-cd ..
+# Destroys the provisioned infrastructure.
+$TERRAFORM_CMD init \
+               --upgrade \
+               --migrate-state
+$TERRAFORM_CMD destroy \
+               -auto-approve

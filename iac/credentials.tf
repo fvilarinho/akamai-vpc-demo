@@ -1,4 +1,5 @@
-# Define the Akamai Cloud token.
+# Defines the Akamai Connected Cloud credentials.
 provider "linode" {
-  token = chomp(var.linodeToken)
+  config_path    = local.credentialsFilename
+  config_profile = "default"
 }

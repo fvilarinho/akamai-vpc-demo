@@ -1,6 +1,4 @@
 /.idea/
-/iac/.terraform/
-/iac/.terraform.lock.hcl
-/iac/terraform.tfstate
-/iac/terraform.tfstate.backup
+/iac/.terraform*
+/iac/terraform*
 /*.ovpn

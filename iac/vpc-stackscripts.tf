@@ -1,16 +1,16 @@
-# Define the VPC Gateway Setup recipe.
+# Defines the VPC gateway setup recipe.
 resource "linode_stackscript" "vpcGatewaySetup" {
-  label       = var.vpcGatewaySetup.label
+  label       = var.vpcGatewaySetup.id
   description = var.vpcGatewaySetup.description
-  images      = [ var.vpcGatewaySetup.image ]
+  images      = [ var.vpcGatewaySetup.os ]
   script      = <<EOF
 #!/bin/bash
-# <UDF name="name" label="Define the VPC Gateway Name" default="vpc-gateway">
-# <UDF name="sshPrivateKey" label="Define the SSH Private Key to be installed" default="">
-# <UDF name="vpnServerNetworkAddressPrefix" label="Define the VPN Server Network Address Prefix" default="10.8.0.0">
-# <UDF name="vpnServerIpToConnect" label="Define the VPN Server IP/Hostname that you want to connect" default="">
+# <UDF name="name" label="Define the VPC gateway name" default="vpc-gateway">
+# <UDF name="ssh_private_key" label="Define the SSH private key to secure the remote connection" default="">
+# <UDF name="vpn_server_network_address_prefix" label="Define the VPN server network address prefix" default="10.8.0.0">
+# <UDF name="vpn_server_ip_to_connect" label="Define the VPN server IP/Hostname that you want to connect" default="">
 
-# Create environment file.
+# Creates environment file.
 function createEnvironmentFile() {
   if [ -f "/root/.env" ]; then
     source /root/.env
@@ -18,56 +18,68 @@ function createEnvironmentFile() {
     echo "Creating environment file..."
 
     echo "export NAME=\"$NAME\"" > /root/.env
-    echo "export SSHPRIVATEKEY=\"$SSHPRIVATEKEY\"" >> /root/.env
-    echo "export VPNSERVERNETWORKADDRESSPREFIX=\"$VPNSERVERNETWORKADDRESSPREFIX\"" >> /root/.env
-    echo "export VPNSERVERIPTOCONNECT=\"$VPNSERVERIPTOCONNECT\"" >> /root/.env
+    echo "export SSH_PRIVATE_KEY=\"$SSH_PRIVATE_KEY\"" >> /root/.env
+    echo "export VPN_SERVER_NETWORK_ADDRESS_PREFIX=\"$VPN_SERVER_NETWORK_ADDRESS_PREFIX\"" >> /root/.env
+    echo "export VPN_SERVER_IP_TO_CONNECT=\"$VPN_SERVER_IP_TO_CONNECT\"" >> /root/.env
   fi
 }
 
-# Define the hostname.
+# Defines the hostname.
 function setHostname() {
   echo "Defining hostname..."
 
   hostnamectl set-hostname "$NAME"
+
   echo "$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')" "$NAME" >> /etc/hosts
 }
 
-# Enable traffic forward between network interfaces.
+# Enables the traffic forward between network interfaces.
 function enableTrafficForwarding() {
   echo "Enabling traffic forward between network interfaces..."
 
   echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf
-  sysctl -p
+
   iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
   iptables-save > /etc/firewall.conf
+
   echo "#!/bin/sh" > /etc/network/if-up.d/run-iptables
   echo "iptables-restore < /etc/firewall.conf" >> /etc/network/if-up.d/run-iptables
+
   chmod +x /etc/network/if-up.d/run-iptables
 }
 
-# Install all required software.
+# Installs all required software.
 function installRequiredSoftware() {
   echo "Installing all required software..."
 
   apt update
   apt -y upgrade
-  apt -y install htop curl wget zip vim net-tools dnsutils tzdata openvpn locales-all
+  apt -y install locales-all \
+                 tzdata \
+                 htop \
+                 curl \
+                 wget \
+                 zip \
+                 vim \
+                 net-tools \
+                 dnsutils \
+                 openvpn
 }
 
-# Install SSH private key to enable communication between VPC gateways and nodes.
+# Installs the SSH private key to secure the connection between VPC gateways and nodes.
 function installSshPrivateKey() {
-  echo "Installing SSH private key to enable communication between VPC gateways and nodes..."
+  echo "Installing the SSH private key to secure the connection between VPC gateways and nodes..."
 
-  if [ -n "$SSHPRIVATEKEY" ]; then
-    echo "$SSHPRIVATEKEY" > /root/.ssh/id_rsa
+  if [ -n "$SSH_PRIVATE_KEY" ]; then
+    echo "$SSH_PRIVATE_KEY" > /root/.ssh/id_rsa
 
     chmod og-rwx /root/.ssh/id_rsa
   fi
 }
 
-# Download VPN Server setup file.
+# Downloads VPN server setup file.
 function downloadVpnServerSetupFile() {
-  echo "Downloading VPN Server setup file..."
+  echo "Downloading VPN server setup file..."
 
   mkdir -p "$HOME_DIR"/bin
 
@@ -76,9 +88,9 @@ function downloadVpnServerSetupFile() {
   chmod +x "$HOME_DIR"/bin/openvpn-setup.sh
 }
 
-# Install VPN Server based on the defined variables.
+# Installs VPN server.
 function installVpnServer() {
-  echo "Installing VPN Server based on the defined variables..."
+  echo "Installing VPN server..."
 
   export HOME_DIR=/opt/vpcGateway
 
@@ -86,26 +98,32 @@ function installVpnServer() {
 
   export AUTO_INSTALL=y
   export CLIENT="$NAME"
-  export SERVER_NETWORK_ADDRESS_PREFIX="$VPNSERVERNETWORKADDRESSPREFIX"
+  export SERVER_NETWORK_ADDRESS_PREFIX="$VPN_SERVER_NETWORK_ADDRESS_PREFIX"
 
   "$HOME_DIR"/bin/openvpn-setup.sh
 }
 
-# Connect into the VPN Server.
+# Connects in the VPN server.
 function connectToTheVpnServer() {
-  echo "Connecting into the VPN Server..."
+  echo "Connecting int the VPN server..."
 
-  ETC_DIR="$HOME_DIR"/etc
+  CLIENT_DIR="$HOME_DIR"/etc
 
   while true; do
     echo "Waiting for the VPN client configuration be available..."
 
-    # Get the VPN client ID.
-    CLIENT=$(ssh -q -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" root@"$VPNSERVERIPTOCONNECT" "cat /etc/hostname")
+    # Gets the VPN client ID.
+    CLIENT=$(ssh -q \
+                 -o "UserKnownHostsFile=/dev/null" \
+                 -o "StrictHostKeyChecking=no" \
+                 root@"$VPN_SERVER_IP_TO_CONNECT" "cat /etc/hostname")
 
     if [ -n "$CLIENT" ]; then
-      # Check if the VPN client configuration exists.
-      VPN_IS_OK=$(ssh -q -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" root@"$VPNSERVERIPTOCONNECT" "ls $ETC_DIR 2> /dev/null" | grep "$CLIENT.ovpn")
+      # Checks if the VPN client configuration exists.
+      VPN_IS_OK=$(ssh -q \
+                      -o "UserKnownHostsFile=/dev/null" \
+                      -o "StrictHostKeyChecking=no" \
+                      root@"$VPN_SERVER_IP_TO_CONNECT" "ls $CLIENT_DIR 2> /dev/null" | grep "$CLIENT.ovpn")
 
       if [ -n "$VPN_IS_OK" ]; then
         break
@@ -115,8 +133,11 @@ function connectToTheVpnServer() {
     sleep 1
   done
 
-  # Download the VPN client configuration.
-  scp -q -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" root@"$VPNSERVERIPTOCONNECT:$ETC_DIR/$CLIENT.ovpn" /etc/openvpn
+  # Downloads the VPN client configuration.
+  scp -q \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "StrictHostKeyChecking=no" \
+      root@"$VPN_SERVER_IP_TO_CONNECT:$CLIENT_DIR/$CLIENT.ovpn" /etc/openvpn
 
   openvpn --config /etc/openvpn/$CLIENT.ovpn
 }
@@ -130,7 +151,7 @@ function main() {
   installSshPrivateKey
   installVpnServer
 
-  if [ -n "$VPNSERVERIPTOCONNECT" ]; then
+  if [ -n "$VPN_SERVER_IP_TO_CONNECT" ]; then
     connectToTheVpnServer
   fi
 }
@@ -139,18 +160,18 @@ main
 EOF
 }
 
-# Define the VPC Nodes Setup recipe.
+# Defines the VPC node setup recipe.
 resource "linode_stackscript" "vpcNodeSetup" {
-  label       = var.vpcNodesSetup.label
+  label       = var.vpcNodesSetup.id
   description = var.vpcNodesSetup.description
-  images      = [ var.vpcNodesSetup.image ]
+  images      = [ var.vpcNodesSetup.os ]
   script      = <<EOF
 #!/bin/bash
-# <UDF name="name" label="Define the VPC Node Name" default="vpc-node">
-# <UDF name="sshPrivateKey" label="Define the SSH Private Key to be installed" default="">
-# <UDF name="defaultGatewayIp" label="Define the VPC Default Gateway IP" default="1.2.3.4">
+# <UDF name="name" label="Defines the VPC node name" default="vpc-node">
+# <UDF name="ssh_private_key" label="Define the SSH private key to secure the remote connection" default="">
+# <UDF name="default_gateway_ip" label="Defines the default gateway IP" default="1.2.3.4">
 
-# Create environment file.
+# Creates the environment file.
 function createEnvironmentFile() {
   if [ -f "/root/.env" ]; then
     source /root/.env
@@ -158,43 +179,50 @@ function createEnvironmentFile() {
     echo "Creating environment file..."
 
     echo "export NAME=\"$NAME\"" > /root/.env
-    echo "export SSHPRIVATEKEY=\"$SSHPRIVATEKEY\"" >> /root/.env
-    echo "export DEFAULTGATEWAYIP=\"$DEFAULTGATEWAYIP\"" >> /root/.env
+    echo "export SSH_PRIVATE_KEY=\"$SSH_PRIVATE_KEY\"" >> /root/.env
+    echo "export DEFAULT_GATEWAY_IP=\"$DEFAULT_GATEWAY_IP\"" >> /root/.env
   fi
 }
 
-# Define the hostname.
+# Defines the hostname.
 function setHostname() {
   echo "Defining hostname..."
 
   hostnamectl set-hostname "$NAME"
+
   echo "$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')" "$NAME" >> /etc/hosts
 }
 
-# Add default VPC routes.
+# Adds the default gateway route.
 function addDefaultRoutes() {
-  echo "Adding default VPC routes..."
+  echo "Adding default gateway route..."
 
-  route add default gw "$DEFAULTGATEWAYIP" eth0
+  route add default gw "$DEFAULT_GATEWAY_IP" eth0
 }
 
-# Install all required software.
+# Installs all required software.
 function installRequiredSoftware() {
   echo "Installing all required software..."
 
   apt update
   apt -y upgrade
-  apt -y install htop curl wget zip vim net-tools dnsutils tzdata locales-all
-
-  touch /var/lib/cloud/instance/locale-check.skip
+  apt -y install locales-all \
+                 tzdata \
+                 htop \
+                 curl \
+                 wget \
+                 zip \
+                 vim \
+                 net-tools \
+                 dnsutils
 }
 
-# Install SSH private key to enable communication between VPC gateways and nodes.
+# Installs the SSH private key to secure the connection between VPC gateways and nodes.
 function installSshPrivateKey() {
-  echo "Installing SSH private key to enable communication between VPC gateways and nodes..."
+  echo "Installing the SSH private key secure the connection between VPC gateways and nodes..."
 
-  if [ -n "$SSHPRIVATEKEY" ]; then
-    echo "$SSHPRIVATEKEY" > /root/.ssh/id_rsa
+  if [ -n "$SSH_PRIVATE_KEY" ]; then
+    echo "$SSH_PRIVATE_KEY" > /root/.ssh/id_rsa
 
     chmod og-rwx /root/.ssh/id_rsa
   fi
