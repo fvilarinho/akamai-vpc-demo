@@ -21,9 +21,10 @@ locals {
 
 # Save the SSH private key locally to be able to download the VPN client configuration file in the VPN server.
 resource "local_sensitive_file" "privateKey" {
-  filename   = local.privateKeyFilename
-  content    = tls_private_key.vpc.private_key_openssh
-  depends_on = [ tls_private_key.vpc ]
+  filename        = local.privateKeyFilename
+  content         = tls_private_key.vpc.private_key_openssh
+  file_permission = "600"
+  depends_on      = [ tls_private_key.vpc ]
 }
 
 # Downloads the VPN client configuration file.
