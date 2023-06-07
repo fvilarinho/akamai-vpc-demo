@@ -59,7 +59,7 @@ function downloadVPNClientConfiguration() {
       -i "$PRIVATE_KEY_FILENAME" \
       -o "UserKnownHostsFile=/dev/null" \
       -o "StrictHostKeyChecking=no" \
-      root@"$VPN_SERVER_IP_TO_CONNECT:$CLIENT_DIR/$CLIENT".ovpn ..
+      root@"$VPN_SERVER_IP_TO_CONNECT:$CLIENT_DIR/$CLIENT".ovpn .
 }
 
 checkDependencies

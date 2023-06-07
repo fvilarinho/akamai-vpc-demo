@@ -4,9 +4,12 @@
 function prepareToExecute() {
   source functions.sh
 
-  rm -rf *.ovpn
-
   cd iac || exit 1
+}
+
+# Clean-up.
+function cleanUp() {
+  rm -f *.ovpn
 }
 
 prepareToExecute
@@ -17,3 +20,5 @@ $TERRAFORM_CMD init \
                --migrate-state
 $TERRAFORM_CMD destroy \
                -auto-approve
+
+cleanUp

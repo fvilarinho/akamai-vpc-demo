@@ -16,7 +16,7 @@ resource "tls_private_key" "vpc" {
 
 # Defines local variables.
 locals {
-  privateKeyFilename = "${local.workDir}/.id_rsa"
+  privateKeyFilename = ".id_rsa"
 }
 
 # Save the SSH private key locally to be able to download the VPN client configuration file in the VPN server.

@@ -1,4 +1,5 @@
 /.idea/
+/iac/.credentials
 /iac/.terraform*
-/iac/terraform*
-/*.ovpn
+/iac/.id_rsa
+/iac/*.ovpn

@@ -6,7 +6,7 @@ terraform {
     region                      = "us-east-1"
     endpoint                    = "us-east-1.linodeobjects.com"
     skip_credentials_validation = true
-    shared_credentials_file     = "~/.akamai-vpc-demo/.credentials"
+    shared_credentials_file     = ".credentials"
   }
 
   required_providers {
@@ -18,6 +18,5 @@ terraform {
 
 # Defines local variables.
 locals {
-  workDir             = pathexpand("~/.akamai-vpc-demo")
-  credentialsFilename = "${local.workDir}/.credentials"
+  credentialsFilename = ".credentials"
 }
