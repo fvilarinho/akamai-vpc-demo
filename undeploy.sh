@@ -4,7 +4,7 @@
 function prepareToExecute() {
   source functions.sh
 
-  rm -f "*.ovpn"
+  rm -rf *.ovpn
 
   cd iac || exit 1
 }
