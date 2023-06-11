@@ -65,7 +65,6 @@ function downloadVPNClientConfiguration() {
       root@"$VPN_SERVER_IP_TO_CONNECT:$ETC_DIR/$CLIENT".ovpn .
 }
 
-prepareToExecute
 checkDependencies
 prepareToExecute
 waitForVPNClientConfiguration
