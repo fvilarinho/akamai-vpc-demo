@@ -2,6 +2,10 @@
 
 # Checks the dependencies of this script.
 function checkDependencies() {
+  if [ -z "$ACTION" ]; then
+    ACTION=download
+  fi
+
   # Checks if the SSH private key filename was defined.
   if [ -z "$PRIVATE_KEY_FILENAME" ]; then
     PRIVATE_KEY_FILENAME="$HOME"/.ssh/id_rsa
