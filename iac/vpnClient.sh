@@ -2,10 +2,6 @@
 
 # Checks the dependencies of this script.
 function checkDependencies() {
-  if [ -z "$ACTION" ]; then
-    ACTION=download
-  fi
-
   # Checks if the SSH private key filename was defined.
   if [ -z "$PRIVATE_KEY_FILENAME" ]; then
     PRIVATE_KEY_FILENAME="$HOME"/.ssh/id_rsa
@@ -35,11 +31,11 @@ function waitForVPNClientConfiguration(){
     echo "Waiting for the VPN client configuration be available..."
 
     # Gets the VPN client ID.
-    CLIENT=$(ssh -q \
-                 -i "$PRIVATE_KEY_FILENAME" \
-                 -o "UserKnownHostsFile=/dev/null" \
-                 -o "StrictHostKeyChecking=no" \
-                 root@"$VPN_SERVER_IP_TO_CONNECT" "hostname")
+    export CLIENT=$(ssh -q \
+                        -i "$PRIVATE_KEY_FILENAME" \
+                        -o "UserKnownHostsFile=/dev/null" \
+                        -o "StrictHostKeyChecking=no" \
+                        root@"$VPN_SERVER_IP_TO_CONNECT" "hostname")
 
     if [ -n "$CLIENT" ]; then
       # Checks if the VPN client configuration exists.
@@ -73,7 +69,3 @@ checkDependencies
 prepareToExecute
 waitForVPNClientConfiguration
 downloadVPNClientConfiguration
-
-if [ "$ACTION" == "connect" ]; then
-  openvpn "$CLIENT".ovpn &
-fi
