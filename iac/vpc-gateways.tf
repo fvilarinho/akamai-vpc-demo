@@ -21,7 +21,6 @@ resource "linode_instance" "vpcGatewaySite1" {
   stackscript_data = {
     name                              = var.vpcGatewaySite1.id
     vpn_server_network_address_prefix = "10.8.0.0"
-    vpn_server_ip_to_connect          = linode_instance.vpcGatewaySite2.ip_address
     ssh_private_key                   = chomp(tls_private_key.vpc.private_key_openssh)
   }
 
@@ -47,8 +46,7 @@ resource "linode_instance" "vpcGatewaySite1" {
   depends_on = [
     random_password.vpcGateway,
     tls_private_key.vpc,
-    linode_stackscript.vpcGatewaySetup,
-    linode_instance.vpcGatewaySite2
+    linode_stackscript.vpcGatewaySetup
   ]
 }
 
