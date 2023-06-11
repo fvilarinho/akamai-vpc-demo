@@ -4,9 +4,7 @@
 function checkDependencies() {
   # Checks if the SSH private key filename was defined.
   if [ -z "$PRIVATE_KEY_FILENAME" ]; then
-    echo "Please specify the SSH private key to connect in the VPN server!"
-
-    exit 1
+    PRIVATE_KEY_FILENAME="$HOME"/.ssh/id_rsa
   fi
 
   # Checks if the VPN Server IP was defined.
