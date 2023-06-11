@@ -8,25 +8,40 @@ resource "linode_stackscript" "vpcGatewaySetup" {
 # <UDF name="name" label="Define the VPC gateway name" default="vpc-gateway">
 # <UDF name="ssh_private_key" label="Define the SSH private key to secure the remote connection" default="">
 # <UDF name="vpn_server_network_address_prefix" label="Define the VPN server network address prefix" default="10.8.0.0">
-# <UDF name="vpn_server_ip_to_connect" label="Define the VPN server IP/Hostname that you want to connect" default="">
+
+# Prepare the environment to execute the commands of this script.
+function prepareToExecute() {
+  echo -e "\033c"
+
+  export HOME_DIR=/opt/vpcGateway
+  export BIN_DIR="$HOME_DIR"/bin
+  export ETC_DIR="$HOME_DIR"/etc
+
+  mkdir -p "$BIN_DIR" 2> /dev/null
+  mkdir -p "$ETC_DIR" 2> /dev/null
+
+  createEnvironmentFile
+}
 
 # Creates environment file.
 function createEnvironmentFile() {
-  if [ -f "/root/.env" ]; then
-    source /root/.env
+  if [ -f "$HOME"/.env ]; then
+    source "$HOME"/.env
   else
-    echo "Creating environment file..."
+    echo "Creating environment file..." > /dev/ttyS0
 
-    echo "export NAME=\"$NAME\"" > /root/.env
-    echo "export SSH_PRIVATE_KEY=\"$SSH_PRIVATE_KEY\"" >> /root/.env
-    echo "export VPN_SERVER_NETWORK_ADDRESS_PREFIX=\"$VPN_SERVER_NETWORK_ADDRESS_PREFIX\"" >> /root/.env
-    echo "export VPN_SERVER_IP_TO_CONNECT=\"$VPN_SERVER_IP_TO_CONNECT\"" >> /root/.env
+    echo "export HOME_DIR=/opt/vpcGateway" > $HOME/.env
+    echo "export BIN_DIR=\"$HOME_DIR\"/bin" >> $HOME/.env
+    echo "export ETC_DIR=\"$HOME_DIR\"/etc" >> $HOME/.env
+    echo "export NAME=\"$NAME\"" >> $HOME/.env
+    echo "export SSH_PRIVATE_KEY=\"$SSH_PRIVATE_KEY\"" >> $HOME/.env
+    echo "export VPN_SERVER_NETWORK_ADDRESS_PREFIX=$VPN_SERVER_NETWORK_ADDRESS_PREFIX" >> $HOME/.env
   fi
 }
 
 # Defines the hostname.
 function setHostname() {
-  echo "Defining hostname..."
+  echo "Defining hostname..." > /dev/ttyS0
 
   hostnamectl set-hostname "$NAME"
 
@@ -35,7 +50,7 @@ function setHostname() {
 
 # Enables the traffic forward between network interfaces.
 function enableTrafficForwarding() {
-  echo "Enabling traffic forward between network interfaces..."
+  echo "Enabling traffic forward between network interfaces..." > /dev/ttyS0
 
   echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf
 
@@ -50,10 +65,10 @@ function enableTrafficForwarding() {
 
 # Installs all required software.
 function installRequiredSoftware() {
-  echo "Installing all required software..."
+  echo "Installing all required software..." > /dev/ttyS0
 
-  apt update
-  apt -y upgrade
+  apt update > /dev/ttyS0
+  apt -y upgrade > /dev/ttyS0
   apt -y install locales-all \
                  tzdata \
                  htop \
@@ -63,97 +78,46 @@ function installRequiredSoftware() {
                  vim \
                  net-tools \
                  dnsutils \
-                 openvpn
+                 openvpn > /dev/ttyS0
 }
 
 # Installs the SSH private key to secure the connection between VPC gateways and nodes.
 function installSshPrivateKey() {
-  echo "Installing the SSH private key to secure the connection between VPC gateways and nodes..."
-
   if [ -n "$SSH_PRIVATE_KEY" ]; then
-    echo "$SSH_PRIVATE_KEY" > /root/.ssh/id_rsa
+    echo "Installing the SSH private key to secure the connection between VPC gateways and nodes..." > /dev/ttyS0
 
-    chmod og-rwx /root/.ssh/id_rsa
+    mkdir -p "$HOME"/.ssh 2> /dev/null
+
+    echo "$SSH_PRIVATE_KEY" > "$HOME"/.ssh/id_rsa
+
+    chmod og-rwx "$HOME"/.ssh/id_rsa
   fi
-}
-
-# Downloads VPN server setup file.
-function downloadVpnServerSetupFile() {
-  echo "Downloading VPN server setup file..."
-
-  mkdir -p "$HOME_DIR"/bin
-
-  wget https://raw.githubusercontent.com/fvilarinho/openvpn-setup/main/setup.sh -O "$HOME_DIR"/bin/openvpn-setup.sh
-
-  chmod +x "$HOME_DIR"/bin/openvpn-setup.sh
 }
 
 # Installs VPN server.
 function installVpnServer() {
-  echo "Installing VPN server..."
+  echo "Installing VPN server..." > /dev/ttyS0
 
-  export HOME_DIR=/opt/vpcGateway
+  wget https://raw.githubusercontent.com/fvilarinho/openvpn-setup/main/setup.sh -O "$BIN_DIR"/vpnSetup.sh > /dev/ttyS0
+  wget https://raw.githubusercontent.com/fvilarinho/akamai-vpc-demo/main/iac/vpnClient.sh -O "$BIN_DIR"/vpnClient.sh > /dev/ttyS0
 
-  downloadVpnServerSetupFile
+  chmod +x "$BIN_DIR"/*.sh
 
   export AUTO_INSTALL=y
   export CLIENT="$NAME"
-  export SERVER_NETWORK_ADDRESS_PREFIX="$VPN_SERVER_NETWORK_ADDRESS_PREFIX"
+  export SERVER_NETWORK_ADDRESS_PREFIX=$VPN_SERVER_NETWORK_ADDRESS_PREFIX
 
-  "$HOME_DIR"/bin/openvpn-setup.sh
-}
-
-# Connects in the VPN server.
-function connectToTheVpnServer() {
-  echo "Connecting int the VPN server..."
-
-  CLIENT_DIR="$HOME_DIR"/etc
-
-  while true; do
-    echo "Waiting for the VPN client configuration be available..."
-
-    # Gets the VPN client ID.
-    CLIENT=$(ssh -q \
-                 -o "UserKnownHostsFile=/dev/null" \
-                 -o "StrictHostKeyChecking=no" \
-                 root@"$VPN_SERVER_IP_TO_CONNECT" "cat /etc/hostname")
-
-    if [ -n "$CLIENT" ]; then
-      # Checks if the VPN client configuration exists.
-      VPN_IS_OK=$(ssh -q \
-                      -o "UserKnownHostsFile=/dev/null" \
-                      -o "StrictHostKeyChecking=no" \
-                      root@"$VPN_SERVER_IP_TO_CONNECT" "ls $CLIENT_DIR 2> /dev/null" | grep "$CLIENT.ovpn")
-
-      if [ -n "$VPN_IS_OK" ]; then
-        break
-      fi
-    fi
-
-    sleep 1
-  done
-
-  # Downloads the VPN client configuration.
-  scp -q \
-      -o "UserKnownHostsFile=/dev/null" \
-      -o "StrictHostKeyChecking=no" \
-      root@"$VPN_SERVER_IP_TO_CONNECT:$CLIENT_DIR/$CLIENT.ovpn" /etc/openvpn
-
-  openvpn --config /etc/openvpn/$CLIENT.ovpn
+  $BIN_DIR/vpnSetup.sh > /dev/ttyS0
 }
 
 # Startup script.
 function main() {
-  createEnvironmentFile
+  prepareToExecute
   setHostname
   enableTrafficForwarding
   installRequiredSoftware
   installSshPrivateKey
   installVpnServer
-
-  if [ -n "$VPN_SERVER_IP_TO_CONNECT" ]; then
-    connectToTheVpnServer
-  fi
 }
 
 main

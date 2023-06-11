@@ -16,8 +16,8 @@ prepareToExecute
 
 # Destroys the provisioned infrastructure.
 $TERRAFORM_CMD init \
-               --upgrade \
-               --migrate-state
+               -upgrade \
+               -migrate-state
 $TERRAFORM_CMD destroy \
                -auto-approve
 
