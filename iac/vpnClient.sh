@@ -69,3 +69,7 @@ checkDependencies
 prepareToExecute
 waitForVPNClientConfiguration
 downloadVPNClientConfiguration
+
+if [ "$ACTION" == "connect" ]; then
+  openvpn "$CLIENT".ovpn &
+fi
