@@ -4,9 +4,7 @@
 function checkDependencies() {
   # Checks if the SSH private key filename was defined.
   if [ -z "$PRIVATE_KEY_FILENAME" ]; then
-    echo "Please specify the SSH private key filename to be used to connect in the VPN Server!"
-
-    exit 1
+    export PRIVATE_KEY_FILENAME=$HOME/.ssh/id_rsa
   fi
 
   # Checks if the VPN Server IP was defined.
@@ -19,7 +17,12 @@ function checkDependencies() {
 
 # Prepares the environment to execute the commands scripts.
 function prepareToExecute() {
-  CLIENT_DIR=/opt/vpcGateway/etc
+  if [ -f "$HOME"/.env ]; then
+    source "$HOME"/.env
+  else
+    export HOME_DIR=/opt/vpcGateway
+    export ETC_DIR="$HOME_DIR"/etc
+  fi
 }
 
 # Waits for the VPN client configuration be available.
@@ -32,7 +35,7 @@ function waitForVPNClientConfiguration(){
                  -i "$PRIVATE_KEY_FILENAME" \
                  -o "UserKnownHostsFile=/dev/null" \
                  -o "StrictHostKeyChecking=no" \
-                 root@"$VPN_SERVER_IP_TO_CONNECT" "cat /etc/hostname")
+                 root@"$VPN_SERVER_IP_TO_CONNECT" "hostname")
 
     if [ -n "$CLIENT" ]; then
       # Checks if the VPN client configuration exists.
@@ -40,7 +43,7 @@ function waitForVPNClientConfiguration(){
                       -i "$PRIVATE_KEY_FILENAME" \
                       -o "UserKnownHostsFile=/dev/null" \
                       -o "StrictHostKeyChecking=no" \
-                      root@"$VPN_SERVER_IP_TO_CONNECT" "ls $CLIENT_DIR 2> /dev/null" | grep "$CLIENT.ovpn")
+                      root@"$VPN_SERVER_IP_TO_CONNECT" "ls \"$ETC_DIR\" 2> /dev/null" | grep "$CLIENT.ovpn")
 
       if [ -n "$VPN_IS_OK" ]; then
         break
@@ -59,9 +62,10 @@ function downloadVPNClientConfiguration() {
       -i "$PRIVATE_KEY_FILENAME" \
       -o "UserKnownHostsFile=/dev/null" \
       -o "StrictHostKeyChecking=no" \
-      root@"$VPN_SERVER_IP_TO_CONNECT:$CLIENT_DIR/$CLIENT".ovpn .
+      root@"$VPN_SERVER_IP_TO_CONNECT:$ETC_DIR/$CLIENT".ovpn .
 }
 
+prepareToExecute
 checkDependencies
 prepareToExecute
 waitForVPNClientConfiguration
