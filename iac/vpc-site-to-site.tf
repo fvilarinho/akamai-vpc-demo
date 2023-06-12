@@ -1,8 +1,4 @@
 resource "null_resource" "connectSite1ToSite2" {
-  triggers = {
-    always_run = timestamp()
-  }
-
   provisioner "remote-exec" {
     connection {
       host        = linode_instance.vpcGatewaySite1.ip_address
