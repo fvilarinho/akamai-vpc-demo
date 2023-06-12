@@ -125,5 +125,3 @@ resource "linode_instance" "vpcNodesSite2Subnet2" {
     linode_instance.vpcGatewaySite2
   ]
 }
-
-resource "" "" {}
