@@ -29,5 +29,8 @@ resource "null_resource" "connectSite2ToSite1" {
     inline = [ "./connectToSite.sh ${linode_instance.vpcGatewaySite1.ip_address}" ]
   }
 
-  depends_on = [ null_resource.downloadVpnClient ]
+  depends_on = [
+    null_resource.downloadVpnClient,
+    null_resource.connectSite1ToSite2
+  ]
 }
