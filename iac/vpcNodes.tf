@@ -11,8 +11,8 @@ resource "linode_instance" "vpcNodesSite1Subnet1" {
   stackscript_id   = linode_stackscript.vpcNodeSetup.id
   stackscript_data = {
     name               = "${var.vpcNodesSite1.id}${count.index + 1}-subnet1"
-    default_gateway_ip = "${var.vpcNodesSite1.subnetsNetworkPrefix}.1.1"
     ssh_private_key    = chomp(tls_private_key.vpc.private_key_openssh)
+    default_gateway_ip = "${var.vpcNodesSite1.subnetsNetworkPrefix}.1.1"
   }
 
   # Subnet 1 (eth0).
@@ -43,8 +43,8 @@ resource "linode_instance" "vpcNodesSite1Subnet2" {
   stackscript_id   = linode_stackscript.vpcNodeSetup.id
   stackscript_data = {
     name               = "${var.vpcNodesSite1.id}${count.index + 1}-subnet2"
-    default_gateway_ip = "${var.vpcNodesSite1.subnetsNetworkPrefix}.2.1"
     ssh_private_key    = chomp(tls_private_key.vpc.private_key_openssh)
+    default_gateway_ip = "${var.vpcNodesSite1.subnetsNetworkPrefix}.2.1"
   }
 
   # Subnet 2 (eth0).
@@ -75,8 +75,8 @@ resource "linode_instance" "vpcNodesSite2Subnet1" {
   stackscript_id   = linode_stackscript.vpcNodeSetup.id
   stackscript_data = {
     name               = "${var.vpcNodesSite2.id}${count.index + 1}-subnet1"
-    default_gateway_ip = "${var.vpcNodesSite2.subnetsNetworkPrefix}.1.1"
     ssh_private_key    = chomp(tls_private_key.vpc.private_key_openssh)
+    default_gateway_ip = "${var.vpcNodesSite2.subnetsNetworkPrefix}.1.1"
   }
 
   # Subnet 1 (eth0).
@@ -107,8 +107,8 @@ resource "linode_instance" "vpcNodesSite2Subnet2" {
   stackscript_id   = linode_stackscript.vpcNodeSetup.id
   stackscript_data = {
     name               = "${var.vpcNodesSite2.id}${count.index}-subnet2"
-    default_gateway_ip = "${var.vpcNodesSite2.subnetsNetworkPrefix}.2.1"
     ssh_private_key    = chomp(tls_private_key.vpc.private_key_openssh)
+    default_gateway_ip = "${var.vpcNodesSite2.subnetsNetworkPrefix}.2.1"
   }
 
   # Subnet 2 (eth0).
@@ -125,3 +125,5 @@ resource "linode_instance" "vpcNodesSite2Subnet2" {
     linode_instance.vpcGatewaySite2
   ]
 }
+
+resource "" "" {}
