@@ -1,3 +1,4 @@
+# Connect the site 1 with site 2.
 resource "null_resource" "connectSite1ToSite2" {
   provisioner "remote-exec" {
     connection {
@@ -13,6 +14,7 @@ resource "null_resource" "connectSite1ToSite2" {
   depends_on = [ null_resource.downloadVpnClient ]
 }
 
+# Connect the site 2 with site 1.
 resource "null_resource" "connectSite2ToSite1" {
   provisioner "remote-exec" {
     connection {

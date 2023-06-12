@@ -2,7 +2,7 @@
 resource "linode_instance" "vpcNodesSite1Subnet1" {
   count            = var.vpcNodesSite1.countPerSubnet
   label            = "${var.vpcNodesSite1.id}${count.index + 1}-subnet1"
-  tags             = [ "Site 1 (${data.linode_region.vpcGatewaySite1.label})" ]
+  tags             = [ "${var.vpcGatewaySite1.label} (${data.linode_region.vpcGatewaySite1.label})" ]
   type             = var.vpcNodesSite1.type
   region           = var.vpcGatewaySite1.region
   image            = var.vpcNodesSetup.os
@@ -11,7 +11,7 @@ resource "linode_instance" "vpcNodesSite1Subnet1" {
   stackscript_id   = linode_stackscript.vpcNodeSetup.id
   stackscript_data = {
     name               = "${var.vpcNodesSite1.id}${count.index + 1}-subnet1"
-    default_gateway_ip = "10.1.1.1"
+    default_gateway_ip = "${var.vpcNodesSite1.subnetsNetworkPrefix}.1.1"
     ssh_private_key    = chomp(tls_private_key.vpc.private_key_openssh)
   }
 
@@ -19,7 +19,7 @@ resource "linode_instance" "vpcNodesSite1Subnet1" {
   interface {
     purpose      = "vlan"
     label        = "subnet1"
-    ipam_address = "10.1.1.${count.index + 2}/24"
+    ipam_address = "${var.vpcNodesSite1.subnetsNetworkPrefix}.1.${count.index + 2}/${var.vpcNodesSite1.subnetsNetworkMask}"
   }
 
   depends_on = [
@@ -34,7 +34,7 @@ resource "linode_instance" "vpcNodesSite1Subnet1" {
 resource "linode_instance" "vpcNodesSite1Subnet2" {
   count            = var.vpcNodesSite1.countPerSubnet
   label            = "${var.vpcNodesSite1.id}${count.index + 1}-subnet2"
-  tags             =  [ "Site 1 (${data.linode_region.vpcGatewaySite1.label})" ]
+  tags             =  [ "${var.vpcGatewaySite1.label} (${data.linode_region.vpcGatewaySite1.label})" ]
   type             = var.vpcNodesSite1.type
   region           = var.vpcGatewaySite1.region
   image            = var.vpcNodesSetup.os
@@ -43,7 +43,7 @@ resource "linode_instance" "vpcNodesSite1Subnet2" {
   stackscript_id   = linode_stackscript.vpcNodeSetup.id
   stackscript_data = {
     name               = "${var.vpcNodesSite1.id}${count.index + 1}-subnet2"
-    default_gateway_ip = "10.1.2.1"
+    default_gateway_ip = "${var.vpcNodesSite1.subnetsNetworkPrefix}.2.1"
     ssh_private_key    = chomp(tls_private_key.vpc.private_key_openssh)
   }
 
@@ -51,7 +51,7 @@ resource "linode_instance" "vpcNodesSite1Subnet2" {
   interface {
     purpose      = "vlan"
     label        = "subnet2"
-    ipam_address = "10.1.2.${count.index + 2}/24"
+    ipam_address = "${var.vpcNodesSite1.subnetsNetworkPrefix}.2.${count.index + 2}/${var.vpcNodesSite1.subnetsNetworkMask}"
   }
 
   depends_on = [
@@ -66,7 +66,7 @@ resource "linode_instance" "vpcNodesSite1Subnet2" {
 resource "linode_instance" "vpcNodesSite2Subnet1" {
   count            = var.vpcNodesSite2.countPerSubnet
   label            = "${var.vpcNodesSite2.id}${count.index + 1}-subnet1"
-  tags             = [ "Site 2 (${data.linode_region.vpcGatewaySite2.label})" ]
+  tags             = [ "${var.vpcGatewaySite2.label} (${data.linode_region.vpcGatewaySite2.label})" ]
   type             = var.vpcNodesSite2.type
   region           = var.vpcGatewaySite2.region
   image            = var.vpcNodesSetup.os
@@ -75,7 +75,7 @@ resource "linode_instance" "vpcNodesSite2Subnet1" {
   stackscript_id   = linode_stackscript.vpcNodeSetup.id
   stackscript_data = {
     name               = "${var.vpcNodesSite2.id}${count.index + 1}-subnet1"
-    default_gateway_ip = "10.2.1.1"
+    default_gateway_ip = "${var.vpcNodesSite2.subnetsNetworkPrefix}.1.1"
     ssh_private_key    = chomp(tls_private_key.vpc.private_key_openssh)
   }
 
@@ -83,7 +83,7 @@ resource "linode_instance" "vpcNodesSite2Subnet1" {
   interface {
     purpose      = "vlan"
     label        = "subnet1"
-    ipam_address = "10.2.1.${count.index + 2}/24"
+    ipam_address = "${var.vpcNodesSite2.subnetsNetworkPrefix}.1.${count.index + 2}/${var.vpcNodesSite2.subnetsNetworkMask}"
   }
 
   depends_on = [
@@ -98,7 +98,7 @@ resource "linode_instance" "vpcNodesSite2Subnet1" {
 resource "linode_instance" "vpcNodesSite2Subnet2" {
   count            = var.vpcNodesSite2.countPerSubnet
   label            = "${var.vpcNodesSite2.id}${count.index + 1}-subnet2"
-  tags             = [ "Site 2 (${data.linode_region.vpcGatewaySite2.label})" ]
+  tags             = [ "${var.vpcGatewaySite2.label} (${data.linode_region.vpcGatewaySite2.label})" ]
   type             = var.vpcNodesSite2.type
   region           = var.vpcGatewaySite2.region
   image            = var.vpcNodesSetup.os
@@ -107,7 +107,7 @@ resource "linode_instance" "vpcNodesSite2Subnet2" {
   stackscript_id   = linode_stackscript.vpcNodeSetup.id
   stackscript_data = {
     name               = "${var.vpcNodesSite2.id}${count.index}-subnet2"
-    default_gateway_ip = "10.2.2.1"
+    default_gateway_ip = "${var.vpcNodesSite2.subnetsNetworkPrefix}.2.1"
     ssh_private_key    = chomp(tls_private_key.vpc.private_key_openssh)
   }
 
@@ -115,7 +115,7 @@ resource "linode_instance" "vpcNodesSite2Subnet2" {
   interface {
     purpose      = "vlan"
     label        = "subnet2"
-    ipam_address = "10.2.2.${count.index + 2}/24"
+    ipam_address = "${var.vpcNodesSite2.subnetsNetworkPrefix}.2.${count.index + 2}/${var.vpcNodesSite2.subnetsNetworkMask}"
   }
 
   depends_on = [

@@ -1,11 +1,15 @@
 #!/bin/bash
 
+# Load environment variables.
 source "$HOME"/.env
 
+# Define the VPN server IP based on the command line argument.
 export VPN_SERVER_IP_TO_CONNECT=$1
 
-"$BIN_DIR"/vpnClient.sh
+# Download the VPN client configuration file.
+"$BIN_DIR"/downloadVpnClient.sh || exit 1
 
+# List all available VPN client configuration files.
 CLIENTS=$(ls *.ovpn)
 
 for CLIENT in $CLIENTS
@@ -14,9 +18,11 @@ do
 
   openvpn --config "$HOME/$CLIENT" > "$HOME/$CLIENT".log 2>&1 &
 
+  # Wait until the connection is established.
   while true; do
     IS_CONNECTED=$(cat "$CLIENT".log | grep "Initialization Sequence Completed")
 
+    # Check if the connection was established.
     if [ -n "$IS_CONNECTED" ]; then
       echo "Connection using $CLIENT was established!"
 

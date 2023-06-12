@@ -55,3 +55,41 @@ resource "linode_firewall" "vpcGatewaySite2" {
     null_resource.connectSite2ToSite1
   ]
 }
+
+# Defines the Firewall rules to access the VPC nodes of the all sites.
+resource "linode_firewall" "vpcNodes" {
+  inbound_policy  = "ACCEPT"
+  outbound_policy = "ACCEPT"
+  label           = "vpc-nodes-firewall"
+
+  inbound {
+    label    = "block-all-tcp"
+    action   = "DROP"
+    protocol = "TCP"
+    ipv4     = [ "0.0.0.0/0" ]
+  }
+
+  inbound {
+    label    = "block-all-udp"
+    action   = "DROP"
+    protocol = "UDP"
+    ipv4     = [ "0.0.0.0/0" ]
+  }
+
+  inbound {
+    label    = "block-all-icmp"
+    action   = "DROP"
+    protocol = "ICMP"
+    ipv4     = [ "0.0.0.0/0" ]
+  }
+
+  linodes = concat(linode_instance.vpcNodesSite1Subnet1.*.id,
+    linode_instance.vpcNodesSite1Subnet2.*.id,
+    linode_instance.vpcNodesSite2Subnet1.*.id,
+    linode_instance.vpcNodesSite2Subnet2.*.id)
+
+  depends_on = [
+    linode_firewall.vpcGatewaySite1,
+    linode_firewall.vpcGatewaySite2
+  ]
+}
