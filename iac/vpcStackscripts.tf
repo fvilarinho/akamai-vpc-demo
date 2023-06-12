@@ -7,6 +7,7 @@ resource "linode_stackscript" "vpcGatewaySetup" {
 #!/bin/bash
 # <UDF name="name" label="Define the VPC gateway name" default="vpc-gateway">
 # <UDF name="ssh_private_key" label="Define the SSH private key to secure the remote connection" default="">
+# <UDF name="additional_packages" label="List (separated by space) all additional packages to be installed" default="">
 # <UDF name="vpn_server_network_prefix" label="Define the VPN server network prefix" default="10.8.0.0">
 # <UDF name="vpn_server_network_mask" label="Define the VPN server network mask" default="24">
 
@@ -88,6 +89,10 @@ function installRequiredSoftware() {
                  dnsutils \
                  openvpn > /dev/null
 
+  if [ -n "$ADDITIONAL_PACKAGES" ]; then
+    apt -y install "$ADDITIONAL_PACKAGES" > /dev/null
+  fi
+
   echo "All required software were installed!" > /dev/ttyS0
 }
 
@@ -150,6 +155,7 @@ resource "linode_stackscript" "vpcNodeSetup" {
 #!/bin/bash
 # <UDF name="name" label="Defines the VPC node name" default="vpc-node">
 # <UDF name="ssh_private_key" label="Define the SSH private key to secure the remote connection" default="">
+# <UDF name="additional_packages" label="List (separated by space) all additional packages to be installed" default="">
 # <UDF name="default_gateway_ip" label="Defines the default gateway IP" default="1.2.3.4">
 
 # Prepare the environment to execute the commands of this script.
@@ -209,6 +215,10 @@ function installRequiredSoftware() {
                  vim \
                  net-tools \
                  dnsutils > /dev/null
+
+  if [ -n "$ADDITIONAL_PACKAGES" ]; then
+    apt -y install "$ADDITIONAL_PACKAGES" > /dev/null
+  fi
 
   echo "All required software were installed!" > /dev/ttyS0
 }
