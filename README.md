@@ -41,14 +41,14 @@ Follow this [diagram](https://viewer.diagrams.net/?tags=%7B%7D&edit=_blank&layer
 
 If you to customize by yourself, just edit the files located in the `iac` directory.
 
-- `credentials.tf`: Defines the Akamai Connected Cloud token.
-- `main.tf`: Defines the VPC provisioning plugins and state storage.
+- `main.tf`: Defines the VPC provisioning providers and credentials.
 - `variables.tf`: Defines the VPC provisioning variables.
-- `vpc-credentials.tf`: Defines default credentials for connecting to the VPC.
-- `vpc-firewall.yml`: Defines firewall rules for connecting to the VPC.
-- `vpc-gateways.yml`: Defines the VPC gateways provisioning recipe.
-- `vpc-nodes.yml`: Defines the VPC nodes provisioning recipe.
-- `vpc-stackscripts.yml`: Defines the VPC configuration scripts.
+- `vpcCredentials.tf`: Defines default credentials for connecting to the VPC.
+- `vpcStackscripts.yml`: Defines the VPC setup scripts.
+- `vpcGateways.yml`: Defines the VPC gateways provisioning recipe.
+- `vpcNodes.yml`: Defines the VPC nodes provisioning recipe.
+- `vpcSiteToSite.tf`: Defines the VPC site-to-site recipe.
+- `vpcFirewall.yml`: Defines firewall rules for connecting to the VPC.
 
 ## 6. Testing
 
