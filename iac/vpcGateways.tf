@@ -20,9 +20,9 @@ resource "linode_instance" "vpcGatewaySite1" {
   stackscript_id   = linode_stackscript.vpcGatewaySetup.id
   stackscript_data = {
     name                      = var.vpcGatewaySite1.id
+    ssh_private_key           = chomp(tls_private_key.vpc.private_key_openssh)
     vpn_server_network_prefix = var.vpcGatewaySite1.vpnServerNetworkPrefix
     vpn_server_network_mask   = var.vpcGatewaySite1.vpnServerNetworkMask
-    ssh_private_key           = chomp(tls_private_key.vpc.private_key_openssh)
   }
 
   # WAN (eth0)
@@ -63,9 +63,9 @@ resource "linode_instance" "vpcGatewaySite2" {
   stackscript_id   = linode_stackscript.vpcGatewaySetup.id
   stackscript_data = {
     name                      = var.vpcGatewaySite2.id
+    ssh_private_key           = chomp(tls_private_key.vpc.private_key_openssh)
     vpn_server_network_prefix = var.vpcGatewaySite2.vpnServerNetworkPrefix
     vpn_server_network_mask   = var.vpcGatewaySite2.vpnServerNetworkMask
-    ssh_private_key           = chomp(tls_private_key.vpc.private_key_openssh)
   }
 
   # WAN (eth0)
