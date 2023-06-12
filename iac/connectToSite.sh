@@ -12,7 +12,5 @@ for CLIENT in $CLIENTS
 do
   echo "Connecting using $CLIENT..."
 
-  openvpn "$HOME/$CLIENT"
+#  openvpn "$HOME/$CLIENT" > &
 done
-
-
