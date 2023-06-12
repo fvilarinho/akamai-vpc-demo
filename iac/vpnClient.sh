@@ -31,11 +31,11 @@ function waitForVPNClientConfiguration(){
     echo "Waiting for the VPN client configuration be available..."
 
     # Gets the VPN client ID.
-    export CLIENT=$(ssh -q \
-                        -i "$PRIVATE_KEY_FILENAME" \
-                        -o "UserKnownHostsFile=/dev/null" \
-                        -o "StrictHostKeyChecking=no" \
-                        root@"$VPN_SERVER_IP_TO_CONNECT" "hostname")
+    CLIENT=$(ssh -q \
+                 -i "$PRIVATE_KEY_FILENAME" \
+                 -o "UserKnownHostsFile=/dev/null" \
+                 -o "StrictHostKeyChecking=no" \
+                 root@"$VPN_SERVER_IP_TO_CONNECT" "hostname")
 
     if [ -n "$CLIENT" ]; then
       # Checks if the VPN client configuration exists.

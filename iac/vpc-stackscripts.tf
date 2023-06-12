@@ -100,8 +100,10 @@ function installVpnServer() {
 
   wget https://raw.githubusercontent.com/fvilarinho/openvpn-setup/main/setup.sh -O "$BIN_DIR"/vpnSetup.sh > /dev/ttyS0
   wget https://raw.githubusercontent.com/fvilarinho/akamai-vpc-demo/main/iac/vpnClient.sh -O "$BIN_DIR"/vpnClient.sh > /dev/ttyS0
+  wget https://raw.githubusercontent.com/fvilarinho/akamai-vpc-demo/main/iac/connectToSite.sh -O "$HOME"/connectToSite.sh > /dev/ttyS0
 
   chmod +x "$BIN_DIR"/*.sh
+  chmod +x "$HOME"/*.sh
 
   export AUTO_INSTALL=y
   export CLIENT="$NAME"
