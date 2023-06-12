@@ -31,7 +31,7 @@ resource "linode_firewall" "vpcGatewaySite2" {
   }
 
   linodes    = [ linode_instance.vpcGatewaySite2.id ]
-  depends_on = [ linode_instance.vpcGatewaySite2 ]
+  depends_on = [ null_resource.connectSite1ToSite2 ]
 }
 
 # Defines the Firewall rules to access the VPC nodes of the all sites.
