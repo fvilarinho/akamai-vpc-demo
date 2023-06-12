@@ -12,7 +12,7 @@ for CLIENT in $CLIENTS
 do
   echo "Connecting using $CLIENT..."
 
-  openvpn "$HOME/$CLIENT" 2>&1 "$CLIENT".log
+  openvpn --config "$HOME/$CLIENT" 2>&1 "$CLIENT".log
 
   while true; do
     IS_CONNECTED=$(cat "$CLIENT".log | grep "Initialization Sequence Completed")
