@@ -20,13 +20,15 @@ do
 
   # Wait until the connection is established.
   while true; do
-    IS_CONNECTED=$(cat "$CLIENT".log | grep "Initialization Sequence Completed")
+    if [ -f "$HOME/$CLIENT".log ]; then
+      IS_CONNECTED=$(cat "$CLIENT".log | grep "Initialization Sequence Completed")
 
-    # Check if the connection was established.
-    if [ -n "$IS_CONNECTED" ]; then
-      echo "Connection using $CLIENT was established!"
+      # Check if the connection was established.
+      if [ -n "$IS_CONNECTED" ]; then
+        echo "Connection using $CLIENT was established!"
 
-      break
+        break
+      fi
     fi
 
     sleep 1
