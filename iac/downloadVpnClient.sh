@@ -59,7 +59,7 @@ function waitForVPNClientConfiguration(){
 
     sleep 1
 
-}  done
+  done
 }
 
 # Downloads the VPN client configuration.
@@ -71,8 +71,6 @@ function downloadVPNClientConfiguration() {
       -o "UserKnownHostsFile=/dev/null" \
       -o "StrictHostKeyChecking=no" \
       root@"$VPN_SERVER_IP_TO_CONNECT:$ETC_DIR/$CLIENT".ovpn .
-
-  echo ""
 }
 
 checkDependencies
