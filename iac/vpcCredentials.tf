@@ -16,12 +16,12 @@ resource "tls_private_key" "vpc" {
 
 # Defines local variables.
 locals {
-  vpcPrivateKeyFilename = ".id_rsa"
+  privateKeyFilename = pathexpand(var.privateKeyFilename)
 }
 
 # Save the SSH private key locally to be able to download the VPN client configuration file in the VPN server.
 resource "local_sensitive_file" "vpcPrivateKey" {
-  filename        = local.vpcPrivateKeyFilename
+  filename        = local.privateKeyFilename
   content         = tls_private_key.vpc.private_key_openssh
   file_permission = "600"
   depends_on      = [ tls_private_key.vpc ]
@@ -32,7 +32,6 @@ resource "null_resource" "downloadVpnClient" {
   provisioner "local-exec" {
     # Required environment variables.
     environment = {
-      PRIVATE_KEY_FILENAME     = local.vpcPrivateKeyFilename
       VPN_SERVER_IP_TO_CONNECT = linode_instance.vpcGatewaySite1.ip_address
     }
 

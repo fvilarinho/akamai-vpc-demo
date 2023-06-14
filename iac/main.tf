@@ -6,7 +6,6 @@ terraform {
     region                      = "us-east-1"
     endpoint                    = "us-east-1.linodeobjects.com"
     skip_credentials_validation = true
-    shared_credentials_file     = ".credentials"
   }
 
   required_providers {
@@ -18,11 +17,11 @@ terraform {
 
 # Defines local variables.
 locals {
-  credentialsFilename = ".credentials"
+  credentialsFilename = pathexpand(var.credentialsFilename)
 }
 
 # Defines the Akamai Connected Cloud credentials.
 provider "linode" {
   config_path    = local.credentialsFilename
-  config_profile = "default"
+  config_profile = "linode"
 }

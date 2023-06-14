@@ -14,4 +14,6 @@ $TERRAFORM_CMD init \
                -upgrade \
                -migrate-state
 $TERRAFORM_CMD apply \
+               -var "credentialsFilename=$CREDENTIALS_FILENAME" \
+               -var "privateKeyFilename=$PRIVATE_KEY_FILENAME" \
                -auto-approve
