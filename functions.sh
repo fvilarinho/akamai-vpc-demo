@@ -22,12 +22,14 @@ function checkDependencies() {
 
 # Prepares the environment to execute the commands of this script.
 function prepareToExecute() {
-  # VMandatory files/paths.
-  export HOME_DIR=/opt/vpcGateway
-  export ETC_DIR="$HOME_DIR"/etc
+  # Provisioning files/paths.
   export WORK_DIR="$PWD/iac"
   export CREDENTIALS_FILENAME="$WORK_DIR"/.credentials
   export PRIVATE_KEY_FILENAME="$WORK_DIR"/.id_rsa
+
+  # VPC files/paths.
+  export HOME_DIR=/opt/vpcGateway
+  export ETC_DIR="$HOME_DIR"/etc
 }
 
 # Creates the credentials file.

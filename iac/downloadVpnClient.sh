@@ -3,10 +3,6 @@
 # Checks the dependencies of this script.
 function checkDependencies() {
   # Checks if the SSH private key filename was defined.
-  if [ -z "$PRIVATE_KEY_FILENAME" ]; then
-    PRIVATE_KEY_FILENAME="$HOME"/.ssh/id_rsa
-  fi
-
   if [ ! -f "$PRIVATE_KEY_FILENAME" ]; then
     echo "Please specify the SSH private key filename to connect to the VPN server!"
 
@@ -23,9 +19,8 @@ function checkDependencies() {
 
 # Prepares the environment to execute the commands scripts.
 function prepareToExecute() {
-  # Load environment attributes.
-  if [ -f "$HOME"/.env ]; then
-    source "$HOME"/.env
+  if [ -z "$PRIVATE_KEY_FILENAME" ]; then
+    PRIVATE_KEY_FILENAME="$HOME"/.ssh/id_rsa
   fi
 }
 

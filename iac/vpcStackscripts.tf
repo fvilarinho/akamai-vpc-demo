@@ -14,10 +14,12 @@ resource "linode_stackscript" "vpcGatewaySetup" {
 function prepareToExecute() {
   echo -e "\033c" > /dev/ttyS0
 
+  # VPC files/paths.
   export HOME_DIR=/opt/vpcGateway
   export BIN_DIR="$HOME_DIR"/bin
   export ETC_DIR="$HOME_DIR"/etc
 
+  # Create VPC files/paths.
   mkdir -p "$BIN_DIR" 2> /dev/null
   mkdir -p "$ETC_DIR" 2> /dev/null
 
@@ -26,18 +28,14 @@ function prepareToExecute() {
 
 # Creates environment file.
 function createEnvironmentFile() {
-  if [ -f "$HOME"/.env ]; then
-    source "$HOME"/.env
-  else
+  ENV_FILE="$HOME"/.env
+
+  if [ ! -f "$ENV_FILE" ]; then
     echo "Creating environment file..." > /dev/ttyS0
 
-    echo "export HOME_DIR=/opt/vpcGateway" > "$HOME"/.env
-    echo "export BIN_DIR=\"$HOME_DIR\"/bin" >> "$HOME"/.env
-    echo "export ETC_DIR=\"$HOME_DIR\"/etc" >> "$HOME"/.env
-    echo "export NAME=\"$NAME\"" >> "$HOME"/.env
-    echo "export SSH_PRIVATE_KEY=\"$SSH_PRIVATE_KEY\"" >> "$HOME"/.env
-    echo "export VPN_SERVER_NETWORK_PREFIX=$VPN_SERVER_NETWORK_PREFIX" >> "$HOME"/.env
-    echo "export VPN_SERVER_NETWORK_MASK=$VPN_SERVER_NETWORK_MASK" >> "$HOME"/.env
+    echo "export HOME_DIR=/opt/vpcGateway" > "$ENV_FILE"
+    echo "export BIN_DIR=\"$HOME_DIR\"/bin" >> "$ENV_FILE"
+    echo "export ETC_DIR=\"$HOME_DIR\"/etc" >> "$ENV_FILE"
 
     echo "Environment file was created!" > /dev/ttyS0
   fi
@@ -45,13 +43,15 @@ function createEnvironmentFile() {
 
 # Defines the hostname.
 function setHostname() {
-  echo "Defining hostname..." > /dev/ttyS0
+  if [ -n "$NAME" ]; then
+    echo "Defining hostname..." > /dev/ttyS0
 
-  hostnamectl set-hostname "$NAME"
+    hostnamectl set-hostname "$NAME"
 
-  echo "$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')" "$NAME" >> /etc/hosts
+    echo "$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')" "$NAME" >> /etc/hosts
 
-  echo "Hostname defined!" > /dev/ttyS0
+    echo "Hostname defined!" > /dev/ttyS0
+  fi
 }
 
 # Enables the traffic forward between network interfaces.
@@ -94,13 +94,16 @@ function installRequiredSoftware() {
 # Installs the SSH private key to secure the connection between VPC gateways and nodes.
 function installSshPrivateKey() {
   if [ -n "$SSH_PRIVATE_KEY" ]; then
+    PRIVATE_KEY_DIR="$HOME"/.ssh
+    PRIVATE_KEY_FILENAME="$PRIVATE_KEY_DIR"/id_rsa
+
     echo "Installing the SSH private key to secure the connection between VPC gateways and nodes..." > /dev/ttyS0
 
-    mkdir -p "$HOME"/.ssh 2> /dev/null
+    mkdir -p "$PRIVATE_KEY_DIR" 2> /dev/null
 
-    echo "$SSH_PRIVATE_KEY" > "$HOME"/.ssh/id_rsa
+    echo "$SSH_PRIVATE_KEY" > "$PRIVATE_KEY_FILENAME"
 
-    chmod og-rwx "$HOME"/.ssh/id_rsa
+    chmod og-rwx "$PRIVATE_KEY_FILENAME"
 
     echo "The SSH private key was installed!" > /dev/ttyS0
   fi
@@ -108,23 +111,29 @@ function installSshPrivateKey() {
 
 # Installs VPN server.
 function installVpnServer() {
-  echo "Installing VPN server..." > /dev/ttyS0
+  if [ -n "$NAME" ]; then
+    if [ -n "$VPN_SERVER_NETWORK_PREFIX" ]; then
+      if [ -n "$VPN_SERVER_NETWORK_MASK" ]; then
+        echo "Installing VPN server..." > /dev/ttyS0
 
-  wget https://raw.githubusercontent.com/fvilarinho/openvpn-setup/main/setup.sh -O "$BIN_DIR"/vpnSetup.sh
-  wget https://raw.githubusercontent.com/fvilarinho/akamai-vpc-demo/main/iac/downloadVpnClient.sh -O "$BIN_DIR"/downloadVpnClient.sh
-  wget https://raw.githubusercontent.com/fvilarinho/akamai-vpc-demo/main/iac/connectToSite.sh -O "$HOME"/connectToSite.sh
+        wget https://raw.githubusercontent.com/fvilarinho/openvpn-setup/main/setup.sh -O "$BIN_DIR"/vpnSetup.sh
+        wget https://raw.githubusercontent.com/fvilarinho/akamai-vpc-demo/main/iac/downloadVpnClient.sh -O "$BIN_DIR"/downloadVpnClient.sh
+        wget https://raw.githubusercontent.com/fvilarinho/akamai-vpc-demo/main/iac/connectToSite.sh -O "$HOME"/connectToSite.sh
 
-  chmod +x "$BIN_DIR"/*.sh
-  chmod +x "$HOME"/*.sh
+        chmod +x "$BIN_DIR"/*.sh
+        chmod +x "$HOME"/*.sh
 
-  export AUTO_INSTALL=y
-  export CLIENT="$NAME"
-  export SERVER_NETWORK_PREFIX=$VPN_SERVER_NETWORK_PREFIX
-  export SERVER_NETWORK_MASK=$VPN_SERVER_NETWORK_MASK
+        export AUTO_INSTALL=y
+        export CLIENT="$NAME"
+        export SERVER_NETWORK_PREFIX=$VPN_SERVER_NETWORK_PREFIX
+        export SERVER_NETWORK_MASK=$VPN_SERVER_NETWORK_MASK
 
-  $BIN_DIR/vpnSetup.sh
+        $BIN_DIR/vpnSetup.sh
 
-  echo "VPN server was installed!" > /dev/ttyS0
+        echo "VPN server was installed!" > /dev/ttyS0
+      fi
+    fi
+  fi
 }
 
 # Startup script.
@@ -155,43 +164,30 @@ resource "linode_stackscript" "vpcNodeSetup" {
 # Prepare the environment to execute the commands of this script.
 function prepareToExecute() {
   echo -e "\033c" > /dev/ttyS0
-
-  createEnvironmentFile
-}
-
-# Creates the environment file.
-function createEnvironmentFile() {
-  if [ -f "$HOME"/.env ]; then
-    source "$HOME"/.env
-  else
-    echo "Creating environment file..." > /dev/ttyS0
-
-    echo "export NAME=\"$NAME\"" > "$HOME"/.env
-    echo "export SSH_PRIVATE_KEY=\"$SSH_PRIVATE_KEY\"" >> "$HOME"/.env
-    echo "export DEFAULT_GATEWAY_IP=$DEFAULT_GATEWAY_IP" >> "$HOME"/.env
-
-    echo "Environment file was created!" > /dev/ttyS0
-  fi
 }
 
 # Defines the hostname.
 function setHostname() {
-  echo "Defining hostname..." > /dev/ttyS0
+  if [ -n "$NAME" ]; then
+    echo "Defining hostname..." > /dev/ttyS0
 
-  hostnamectl set-hostname "$NAME"
+    hostnamectl set-hostname "$NAME"
 
-  echo "$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')" "$NAME" >> /etc/hosts
+    echo "$(ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')" "$NAME" >> /etc/hosts
 
-  echo "Hostname defined!" > /dev/ttyS0
+    echo "Hostname defined!" > /dev/ttyS0
+  fi
 }
 
 # Adds the default gateway route.
 function addDefaultRoutes() {
-  echo "Adding the default gateway route..." > /dev/ttyS0
+  if [ -n "$DEFAULT_GATEWAY_IP" ]; then
+    echo "Adding the default gateway route..." > /dev/ttyS0
 
-  route add default gw "$DEFAULT_GATEWAY_IP" eth0
+    route add default gw "$DEFAULT_GATEWAY_IP" eth0
 
-  echo "The default default route was defined!" > /dev/ttyS0
+    echo "The default default route was defined!" > /dev/ttyS0
+  fi
 }
 
 # Installs all required software.
@@ -216,13 +212,16 @@ function installRequiredSoftware() {
 # Installs the SSH private key to secure the connection between VPC gateways and nodes.
 function installSshPrivateKey() {
   if [ -n "$SSH_PRIVATE_KEY" ]; then
+    PRIVATE_KEY_DIR="$HOME"/.ssh
+    PRIVATE_KEY_FILENAME="$PRIVATE_KEY_DIR"/id_rsa
+
     echo "Installing the SSH private key to secure the connection between VPC gateways and nodes..." > /dev/ttyS0
 
-    mkdir -p "$HOME"/.ssh 2> /dev/null
+    mkdir -p "$PRIVATE_KEY_DIR" 2> /dev/null
 
-    echo "$SSH_PRIVATE_KEY" > "$HOME"/.ssh/id_rsa
+    echo "$SSH_PRIVATE_KEY" > "$PRIVATE_KEY_FILENAME"
 
-    chmod og-rwx "$HOME"/.ssh/id_rsa
+    chmod og-rwx "$PRIVATE_KEY_FILENAME"
 
     echo "The SSH private key was installed!" > /dev/ttyS0
   fi
