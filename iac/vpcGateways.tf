@@ -13,7 +13,7 @@ resource "linode_instance" "vpcGatewaySite1" {
   label            = var.vpcGatewaySite1.id
   tags             = [
     var.vpcLabel,
-    "${var.vpcLabel} (${var.vpcGatewaySite1.label} - ${data.linode_region.vpcGatewaySite2.label})"
+    "${var.vpcLabel} (${var.vpcGatewaySite1.label} - ${data.linode_region.vpcGatewaySite1.label})"
   ]
   type             = var.vpcGatewaySite1.type
   region           = var.vpcGatewaySite1.region
