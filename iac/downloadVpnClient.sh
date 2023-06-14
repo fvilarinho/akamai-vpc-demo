@@ -7,6 +7,12 @@ function checkDependencies() {
     PRIVATE_KEY_FILENAME="$HOME"/.ssh/id_rsa
   fi
 
+  if [ ! -f "$PRIVATE_KEY_FILENAME" ]; then
+    echo "Please specify the SSH private key filename to connect to the VPN server!"
+
+    exit 1
+  fi
+
   # Checks if the VPN Server IP was defined.
   if [ -z "$VPN_SERVER_IP_TO_CONNECT" ]; then
     echo "Please specify the VPN server IP/Hostname to connect!"
@@ -17,11 +23,9 @@ function checkDependencies() {
 
 # Prepares the environment to execute the commands scripts.
 function prepareToExecute() {
+  # Load environment attributes.
   if [ -f "$HOME"/.env ]; then
     source "$HOME"/.env
-  else
-    export HOME_DIR=/opt/vpcGateway
-    export ETC_DIR="$HOME_DIR"/etc
   fi
 }
 

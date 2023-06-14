@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Load environment attributes.
 source "$HOME/.env"
 
 # Define the VPN server IP based on the command line argument.
