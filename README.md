@@ -31,7 +31,9 @@ The infrastructure provisioning state will be stored in an object storage. By de
 Cloud object storage. So, before start the deployment, you need to create your bucket and credentials. To do that, 
 follow the these [instructions](https://www.linode.com/docs/products/storage/object-storage/get-started/).
 
-The credentials should be stored in the `iac/.credentials`.
+Environments variables needed:
+- `CREDENTIALS`: Contains all credentials (in key/value format) needed for the provisioning. Please check the template
+  in `iac/credentials.template`.
 
 ## 4. Architecture
 
@@ -50,6 +52,14 @@ If you to customize by yourself, just edit the files located in the `iac` direct
 - `vpcSiteToSite.tf`: Defines the VPC site-to-site recipe.
 - `vpcFirewall.yml`: Defines firewall rules for connecting to the VPC.
 
+Follow the documentation below as suggestion to setup the credentials and environment:
+
+- [`How to create Linode credentials`](https://www.linode.com/docs/api)
+- [`How to create the Linode object storage to store Terraform provisioning state`](https://www.linode.com/docs/guides/platform/object-storage)
+- [`List of Linode regions`](https://www.linode.com/docs/api/regions/)
+- [`List of Linode types`](https://www.linode.com/docs/api/linode-types/)
+- [`List of Linode images`](https://www.linode.com/docs/api/images/)
+
 ## 6. Testing
 
 After the VPC was created, you can connect into it using an OpenVPN client.
@@ -61,7 +71,8 @@ Import the `.ovpn` file saved in this project directory, after the provisioning.
 
 ## 7. Other resources
 
-- [`Akamai Connected Cloud`](https://www.linode.com)
+- [`Terraform Linode Provider`](https://registry.terraform.io/providers/linode/linode/latest/docs)
+- [`Linode documentation`](https://www.linode.com/docs/)
 - [`OpenVPN Setup Script`](https://github.com/fvilarinho/openvpn-setup)
 
 And that's it!!
