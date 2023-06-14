@@ -2,7 +2,10 @@
 resource "linode_instance" "vpcNodesSite1Subnet1" {
   count            = var.vpcNodesSite1.countPerSubnet
   label            = "${var.vpcNodesSite1.id}${count.index + 1}-subnet1"
-  tags             = [ "${var.vpcGatewaySite1.label} (${data.linode_region.vpcGatewaySite1.label})" ]
+  tags             = [
+    var.vpcLabel,
+    "${var.vpcLabel} (${var.vpcGatewaySite1.label} - ${data.linode_region.vpcGatewaySite2.label})"
+  ]
   type             = var.vpcNodesSite1.type
   region           = var.vpcGatewaySite1.region
   image            = var.vpcNodesSetup.os
@@ -34,7 +37,10 @@ resource "linode_instance" "vpcNodesSite1Subnet1" {
 resource "linode_instance" "vpcNodesSite1Subnet2" {
   count            = var.vpcNodesSite1.countPerSubnet
   label            = "${var.vpcNodesSite1.id}${count.index + 1}-subnet2"
-  tags             =  [ "${var.vpcGatewaySite1.label} (${data.linode_region.vpcGatewaySite1.label})" ]
+  tags             = [
+    var.vpcLabel,
+    "${var.vpcLabel} (${var.vpcGatewaySite1.label} - ${data.linode_region.vpcGatewaySite2.label})"
+  ]
   type             = var.vpcNodesSite1.type
   region           = var.vpcGatewaySite1.region
   image            = var.vpcNodesSetup.os
@@ -66,7 +72,10 @@ resource "linode_instance" "vpcNodesSite1Subnet2" {
 resource "linode_instance" "vpcNodesSite2Subnet1" {
   count            = var.vpcNodesSite2.countPerSubnet
   label            = "${var.vpcNodesSite2.id}${count.index + 1}-subnet1"
-  tags             = [ "${var.vpcGatewaySite2.label} (${data.linode_region.vpcGatewaySite2.label})" ]
+  tags             = [
+    var.vpcLabel,
+    "${var.vpcLabel} (${var.vpcGatewaySite2.label} - ${data.linode_region.vpcGatewaySite2.label})"
+  ]
   type             = var.vpcNodesSite2.type
   region           = var.vpcGatewaySite2.region
   image            = var.vpcNodesSetup.os
@@ -98,7 +107,10 @@ resource "linode_instance" "vpcNodesSite2Subnet1" {
 resource "linode_instance" "vpcNodesSite2Subnet2" {
   count            = var.vpcNodesSite2.countPerSubnet
   label            = "${var.vpcNodesSite2.id}${count.index + 1}-subnet2"
-  tags             = [ "${var.vpcGatewaySite2.label} (${data.linode_region.vpcGatewaySite2.label})" ]
+  tags             = [
+    var.vpcLabel,
+    "${var.vpcLabel} (${var.vpcGatewaySite2.label} - ${data.linode_region.vpcGatewaySite2.label})"
+  ]
   type             = var.vpcNodesSite2.type
   region           = var.vpcGatewaySite2.region
   image            = var.vpcNodesSetup.os

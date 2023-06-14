@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Load environment variables.
-source "$HOME"/.env
-
 # Define the VPN server IP based on the command line argument.
 export VPN_SERVER_IP_TO_CONNECT=$1
 

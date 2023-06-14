@@ -6,6 +6,10 @@ variable "privateKeyFilename" {
   default = ".id_rsa"
 }
 
+variable "vpcLabel" {
+  default = "akamai-vpc-demo"
+}
+
 # Attributes of the VPC gateway for Site 1.
 variable "vpcGatewaySite1" {
   default = {
