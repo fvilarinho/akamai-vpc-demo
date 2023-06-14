@@ -20,6 +20,27 @@ function prepareToExecute() {
 
   mkdir -p "$BIN_DIR" 2> /dev/null
   mkdir -p "$ETC_DIR" 2> /dev/null
+
+  createEnvironmentFile
+}
+
+# Creates environment file.
+function createEnvironmentFile() {
+  if [ -f "$HOME"/.env ]; then
+    source "$HOME"/.env
+  else
+    echo "Creating environment file..." > /dev/ttyS0
+
+    echo "export HOME_DIR=/opt/vpcGateway" > "$HOME"/.env
+    echo "export BIN_DIR=\"$HOME_DIR\"/bin" >> "$HOME"/.env
+    echo "export ETC_DIR=\"$HOME_DIR\"/etc" >> "$HOME"/.env
+    echo "export NAME=\"$NAME\"" >> "$HOME"/.env
+    echo "export SSH_PRIVATE_KEY=\"$SSH_PRIVATE_KEY\"" >> "$HOME"/.env
+    echo "export VPN_SERVER_NETWORK_PREFIX=$VPN_SERVER_NETWORK_PREFIX" >> "$HOME"/.env
+    echo "export VPN_SERVER_NETWORK_MASK=$VPN_SERVER_NETWORK_MASK" >> "$HOME"/.env
+
+    echo "Environment file was created!" > /dev/ttyS0
+  fi
 }
 
 # Defines the hostname.
@@ -134,6 +155,23 @@ resource "linode_stackscript" "vpcNodeSetup" {
 # Prepare the environment to execute the commands of this script.
 function prepareToExecute() {
   echo -e "\033c" > /dev/ttyS0
+
+  createEnvironmentFile
+}
+
+# Creates the environment file.
+function createEnvironmentFile() {
+  if [ -f "$HOME"/.env ]; then
+    source "$HOME"/.env
+  else
+    echo "Creating environment file..." > /dev/ttyS0
+
+    echo "export NAME=\"$NAME\"" > "$HOME"/.env
+    echo "export SSH_PRIVATE_KEY=\"$SSH_PRIVATE_KEY\"" >> "$HOME"/.env
+    echo "export DEFAULT_GATEWAY_IP=$DEFAULT_GATEWAY_IP" >> "$HOME"/.env
+
+    echo "Environment file was created!" > /dev/ttyS0
+  fi
 }
 
 # Defines the hostname.

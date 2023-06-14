@@ -17,8 +17,12 @@ function checkDependencies() {
 
 # Prepares the environment to execute the commands scripts.
 function prepareToExecute() {
-  export HOME_DIR=/opt/vpcGateway
-  export ETC_DIR="$HOME_DIR"/etc
+  if [ -f "$HOME"/.env ]; then
+    source "$HOME"/.env
+  else
+    export HOME_DIR=/opt/vpcGateway
+    export ETC_DIR="$HOME_DIR"/etc
+  fi
 }
 
 # Waits for the VPN client configuration be available.
