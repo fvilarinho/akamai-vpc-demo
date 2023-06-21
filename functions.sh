@@ -42,6 +42,8 @@ function checkDependencies() {
 
 # Prepares the environment to execute the commands of this script.
 function prepareToExecute() {
+  showBanner
+
   # Provisioning files/paths.
   export WORK_DIR="$PWD/iac"
   export CREDENTIALS_FILENAME="$WORK_DIR"/.credentials
