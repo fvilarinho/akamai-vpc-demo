@@ -9,7 +9,7 @@ function prepareToExecute() {
 
 prepareToExecute
 
-# Start the provisioning of the infrastructure.
+# Starts the provisioning of the infrastructure.
 $TERRAFORM_CMD init \
                -upgrade \
                -migrate-state
