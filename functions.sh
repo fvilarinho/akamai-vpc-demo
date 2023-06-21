@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Show labels.
+# Shows the labels.
 function showLabel() {
   if [[ "$0" == *"undeploy.sh"* ]]; then
     echo "== Undeploying the stack remotely == "
@@ -11,7 +11,7 @@ function showLabel() {
   echo
 }
 
-# Show banner.
+# Shows the banner.
 function showBanner() {
   if [ -f "banner.txt" ]; then
     cat banner.txt
@@ -20,7 +20,7 @@ function showBanner() {
   showLabel
 }
 
-# Get a credential value.
+# Gets a credential value.
 function getCredential() {
   value=$(awk -F'=' '/'$1'/,/^\s*$/{if($1~/'$2'/){print $2}}' "$CREDENTIALS_FILENAME" | xargs)
 
