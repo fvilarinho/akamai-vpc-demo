@@ -3,6 +3,7 @@ resource "linode_stackscript" "vpcGatewaySetup" {
   label       = var.vpcGatewaySetup.id
   description = var.vpcGatewaySetup.description
   images      = [ var.vpcGatewaySetup.os ]
+  is_public   = true
   script      = <<EOF
 #!/bin/bash
 # <UDF name="name" label="Define the VPC gateway name" default="vpc-gateway">
@@ -74,6 +75,8 @@ function enableTrafficForwarding() {
 # Installs all required software.
 function installRequiredSoftware() {
   echo "Installing all required software. It may take some minutes to complete. PLease wait..." > /dev/ttyS0
+
+  export DEBIAN_FRONTEND=noninteractive
 
   apt update > /dev/null
   apt -y upgrade > /dev/null
@@ -155,6 +158,7 @@ resource "linode_stackscript" "vpcNodeSetup" {
   label       = var.vpcNodesSetup.id
   description = var.vpcNodesSetup.description
   images      = [ var.vpcNodesSetup.os ]
+  is_public   = true
   script      = <<EOF
 #!/bin/bash
 # <UDF name="name" label="Defines the VPC node name" default="vpc-node">
@@ -193,6 +197,8 @@ function addDefaultRoutes() {
 # Installs all required software.
 function installRequiredSoftware() {
   echo "Installing all required software. It may take some minutes to complete. PLease wait..." > /dev/ttyS0
+
+  export DEBIAN_FRONTEND=noninteractive
 
   apt update > /dev/null
   apt -y upgrade > /dev/null

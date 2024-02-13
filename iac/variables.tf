@@ -6,8 +6,8 @@ variable "privateKeyFilename" {
   default = ".id_rsa"
 }
 
-variable "vpcLabel" {
-  default = "akamai-vpc-demo"
+variable "identifier" {
+  default = "vpc"
 }
 
 # Attributes of the VPC gateway for Site 1.
@@ -59,7 +59,7 @@ variable "vpcNodesSite2" {
 # Attributes of the VPC gateway setup.
 variable "vpcGatewaySetup" {
   default = {
-    id          = "vpc-gateway"
+    id          = "VPC Gateway"
     description = "Setup a VPC Gateway at the boot."
     os          = "linode/debian10"
   }
@@ -68,7 +68,7 @@ variable "vpcGatewaySetup" {
 # Attributes of the VPC nodes setup.
 variable "vpcNodesSetup" {
   default = {
-    id          = "vpc-node"
+    id          = "VPC Node"
     description = "Setup a VPC Node at the boot."
     os          = "linode/debian10"
   }

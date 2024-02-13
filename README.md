@@ -45,12 +45,12 @@ If you to customize by yourself, just edit the files located in the `iac` direct
 
 - `main.tf`: Defines the VPC provisioning providers and credentials.
 - `variables.tf`: Defines the VPC provisioning variables.
-- `vpcCredentials.tf`: Defines default credentials for connecting to the VPC.
-- `vpcStackscripts.yml`: Defines the VPC setup scripts.
-- `vpcGateways.yml`: Defines the VPC gateways provisioning recipe.
-- `vpcNodes.yml`: Defines the VPC nodes provisioning recipe.
-- `vpcSiteToSite.tf`: Defines the VPC site-to-site recipe.
-- `vpcFirewall.yml`: Defines firewall rules for connecting to the VPC.
+- `vpc-credentials.tf`: Defines default credentials for connecting to the VPC.
+- `vpc-stackscripts.yml`: Defines the VPC setup scripts.
+- `vpc-gateways.yml`: Defines the VPC gateways provisioning recipe.
+- `vpc-nodes.yml`: Defines the VPC nodes provisioning recipe.
+- `vpc-site-to-site.tf`: Defines the VPC site-to-site recipe.
+- `vpc-firewall.yml`: Defines firewall rules for connecting to the VPC.
 
 Follow the documentation below as suggestion to setup the credentials and environment:
 

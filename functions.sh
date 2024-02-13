@@ -22,7 +22,11 @@ function showBanner() {
 
 # Gets a credential value.
 function getCredential() {
-  value=$(awk -F'=' '/'$1'/,/^\s*$/{if($1~/'$2'/){print $2}}' "$CREDENTIALS_FILENAME" | xargs)
+  if [ -f "$CREDENTIALS_FILENAME" ]; then
+    value=$(awk -F'=' '/'$1'/,/^\s*$/{ if($1~/'$2'/) { print substr($0, length($1) + 2) } }' "$CREDENTIALS_FILENAME" | tr -d '"' | tr -d ' ')
+  else
+    value=
+  fi
 
   echo "$value"
 }
@@ -50,21 +54,5 @@ function prepareToExecute() {
   export PRIVATE_KEY_FILENAME="$WORK_DIR"/.id_rsa
 }
 
-# Creates the credentials file.
-function createCredentialsFile() {
-  if [ -n "$CREDENTIALS" ]; then
-    if [ ! -f "$CREDENTIALS_FILENAME" ]; then
-      echo "$CREDENTIALS" > "$CREDENTIALS_FILENAME"
-    fi
-  fi
-
-  # Loads the mandatory credentials.
-  if [ -f "$CREDENTIALS_FILENAME" ]; then
-    export AWS_ACCESS_KEY_ID=$(getCredential "linode" "aws_access_key_id")
-    export AWS_SECRET_ACCESS_KEY=$(getCredential "linode" "aws_secret_access_key")
-  fi
-}
-
 checkDependencies
 prepareToExecute
-createCredentialsFile
