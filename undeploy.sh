@@ -1,24 +1,42 @@
 #!/bin/bash
 
-# Prepares the environment to execute the commands of this script.
+# Checks the dependencies of this script.
+function checkDependencies() {
+  # Checks if terraform is installed.
+  if [ -z "$TERRAFORM_CMD" ]; then
+    echo "Terraform is not installed! Please install it first to continue!"
+
+    exit 1
+  fi
+}
+
+# Prepares the environment to execute this script.
 function prepareToExecute() {
   source functions.sh
+
+  showBanner
 
   cd iac || exit 1
 }
 
-# Clean-up.
-function cleanUp() {
-  rm -f *.ovpn
+# Destroy the provisioned infrastructure.
+function undeploy() {
+  $TERRAFORM_CMD init \
+                 -upgrade \
+                 -migrate-state
+
+  $TERRAFORM_CMD destroy \
+                 -auto-approve
 }
 
-prepareToExecute
+# Main function.
+function main() {
+  prepareToExecute
+  checkDependencies
+  undeploy
+}
 
-# Destroys the provisioned infrastructure.
-$TERRAFORM_CMD init \
-               -upgrade \
-               -migrate-state
-$TERRAFORM_CMD destroy \
-               -auto-approve
+main
 
-cleanUp
+
+
