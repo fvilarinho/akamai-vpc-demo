@@ -31,9 +31,7 @@ The infrastructure provisioning state will be stored in an object storage. By de
 Cloud object storage. So, before start the deployment, you need to create your bucket and credentials. To do that, 
 follow the these [instructions](https://www.linode.com/docs/products/storage/object-storage/get-started/).
 
-Environments variables needed:
-- `CREDENTIALS`: Contains all credentials (in key/value format) needed for the provisioning. Please check the template
-  in `iac/credentials.template`.
+Please define the Akamai Connected Cloud credentials in the file `iac/.credentials` based on `iac/.credentials.template`.
 
 ## 4. Architecture
 
