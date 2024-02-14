@@ -2,7 +2,12 @@
 
 # Checks the dependencies of this script.
 function checkDependencies() {
-  # Checks if terraform is installed.
+  if [ ! -f "$CREDENTIALS_FILENAME" ]; then
+    echo "The credentials filename was not found! Please finish the setup!"
+
+    exit 1
+  fi
+
   if [ -z "$TERRAFORM_CMD" ]; then
     echo "Terraform is not installed! Please install it first to continue!"
 
@@ -19,7 +24,7 @@ function prepareToExecute() {
   cd iac || exit 1
 }
 
-# Destroy the provisioned infrastructure.
+# Destroys the provisioned infrastructure.
 function undeploy() {
   $TERRAFORM_CMD init \
                  -upgrade \
@@ -37,6 +42,3 @@ function main() {
 }
 
 main
-
-
-

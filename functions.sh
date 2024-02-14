@@ -3,9 +3,9 @@
 # Shows the labels.
 function showLabel() {
   if [[ "$0" == *"undeploy.sh"* ]]; then
-    echo "== Undeploying the stack remotely == "
+    echo "** Undeploys **"
   elif [[ "$0" == *"deploy.sh"* ]]; then
-    echo "== Deploying the stack remotely == "
+    echo "** Deploys **"
   fi
 
   echo
@@ -33,12 +33,12 @@ function getCredential() {
 
 # Prepares the environment to execute the commands of this script.
 function prepareToExecute() {
-  # Provisioning files/paths.
+  # Required files/paths.
   export WORK_DIR="$PWD/iac"
   export CREDENTIALS_FILENAME="$WORK_DIR"/.credentials
   export PRIVATE_KEY_FILENAME="$WORK_DIR"/.id_rsa
 
-  # Finds terraform binary.
+  # Required binary.
   export TERRAFORM_CMD=$(which terraform)
 }
 
