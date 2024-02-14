@@ -21,7 +21,7 @@ function checkDependencies() {
   fi
 }
 
-# Prepares the environment to execute the commands scripts.
+# Prepares the environment to execute this script.
 function prepareToExecute() {
   if [ -z "$HOME_DIR" ]; then
     export HOME_DIR=/opt/vpcGateway
@@ -73,7 +73,12 @@ function downloadVPNClientConfiguration() {
       root@"$VPN_SERVER_IP_TO_CONNECT:$ETC_DIR/$CLIENT".ovpn .
 }
 
-checkDependencies
-prepareToExecute
-waitForVPNClientConfiguration
-downloadVPNClientConfiguration
+# Main function.
+function main() {
+  checkDependencies
+  prepareToExecute
+  waitForVPNClientConfiguration
+  downloadVPNClientConfiguration
+}
+
+main

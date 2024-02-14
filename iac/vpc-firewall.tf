@@ -1,7 +1,6 @@
 # Defines the Firewall rules to access the VPC of site 1.
 resource "linode_firewall" "vpcGatewaySite1" {
   label           = "${var.vpcGatewaySite1.id}-firewall"
-  tags            = [ var.identifier ]
   inbound_policy  = "DROP"
   outbound_policy = "ACCEPT"
 
@@ -20,7 +19,6 @@ resource "linode_firewall" "vpcGatewaySite1" {
 # Defines the Firewall rules to access the VPC of site 2.
 resource "linode_firewall" "vpcGatewaySite2" {
   label           = "${var.vpcGatewaySite2.id}-firewall"
-  tags            = [ var.identifier ]
   inbound_policy  = "DROP"
   outbound_policy = "ACCEPT"
 
@@ -39,7 +37,6 @@ resource "linode_firewall" "vpcGatewaySite2" {
 # Defines the Firewall rules to access the VPC nodes of the all sites.
 resource "linode_firewall" "vpcNodes" {
   label           = "vpc-nodes-firewall"
-  tags            = [ var.identifier ]
   inbound_policy  = "ACCEPT"
   outbound_policy = "ACCEPT"
 

@@ -40,6 +40,10 @@ function prepareToExecute() {
 
   # Required binary.
   export TERRAFORM_CMD=$(which terraform)
+
+  # Environment variables.
+  export TF_VAR_credentialsFilename="$CREDENTIALS_FILENAME"
+  export TF_VAR_privateKeyFilename="$PRIVATE_KEY_FILENAME"
 }
 
 prepareToExecute

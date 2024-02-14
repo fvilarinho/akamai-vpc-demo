@@ -2,7 +2,7 @@
 resource "linode_instance" "vpcNodesSite1Subnet1" {
   count            = var.vpcNodesSite1.countPerSubnet
   label            = "${var.vpcNodesSite1.id}${count.index + 1}-subnet1"
-  tags             = [ var.identifier ]
+  tags             = [ var.vpcNodesSite1.tag ]
   type             = var.vpcNodesSite1.type
   region           = var.vpcGatewaySite1.region
   image            = var.vpcNodesSetup.os
@@ -34,7 +34,7 @@ resource "linode_instance" "vpcNodesSite1Subnet1" {
 resource "linode_instance" "vpcNodesSite1Subnet2" {
   count            = var.vpcNodesSite1.countPerSubnet
   label            = "${var.vpcNodesSite1.id}${count.index + 1}-subnet2"
-  tags             = [ var.identifier ]
+  tags             = [ var.vpcNodesSite1.tag ]
   type             = var.vpcNodesSite1.type
   region           = var.vpcGatewaySite1.region
   image            = var.vpcNodesSetup.os
@@ -66,7 +66,7 @@ resource "linode_instance" "vpcNodesSite1Subnet2" {
 resource "linode_instance" "vpcNodesSite2Subnet1" {
   count            = var.vpcNodesSite2.countPerSubnet
   label            = "${var.vpcNodesSite2.id}${count.index + 1}-subnet1"
-  tags             = [ var.identifier ]
+  tags             = [ var.vpcNodesSite2.tag ]
   type             = var.vpcNodesSite2.type
   region           = var.vpcGatewaySite2.region
   image            = var.vpcNodesSetup.os
@@ -98,7 +98,7 @@ resource "linode_instance" "vpcNodesSite2Subnet1" {
 resource "linode_instance" "vpcNodesSite2Subnet2" {
   count            = var.vpcNodesSite2.countPerSubnet
   label            = "${var.vpcNodesSite2.id}${count.index + 1}-subnet2"
-  tags             = [ var.identifier ]
+  tags             = [ var.vpcNodesSite2.tag ]
   type             = var.vpcNodesSite2.type
   region           = var.vpcGatewaySite2.region
   image            = var.vpcNodesSetup.os

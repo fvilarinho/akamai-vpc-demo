@@ -30,7 +30,7 @@ function deploy() {
                  -upgrade \
                  -migrate-state || exit 1
 
-  $TERRAFORM_CMD plan
+  $TERRAFORM_CMD plan || exit 1
 
   $TERRAFORM_CMD apply \
                  -auto-approve
