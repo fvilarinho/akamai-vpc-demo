@@ -3,9 +3,9 @@
 # Shows the labels.
 function showLabel() {
   if [[ "$0" == *"undeploy.sh"* ]]; then
-    echo "** Undeploys **"
+    echo "** Undeploy **"
   elif [[ "$0" == *"deploy.sh"* ]]; then
-    echo "** Deploys **"
+    echo "** Deploy **"
   fi
 
   echo
