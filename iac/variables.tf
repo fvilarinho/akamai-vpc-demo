@@ -40,7 +40,7 @@ variable "vpcNodesSite1" {
     tag                  = "vpc"
     subnetsNetworkPrefix = "10.1"
     subnetsNetworkMask   = "24"
-    countPerSubnet       = 2
+    countPerSubnet       = 1
   }
 }
 
@@ -52,7 +52,7 @@ variable "vpcNodesSite2" {
     tag                  = "vpc"
     subnetsNetworkPrefix = "10.2"
     subnetsNetworkMask   = "24"
-    countPerSubnet       = 2
+    countPerSubnet       = 1
   }
 }
 
